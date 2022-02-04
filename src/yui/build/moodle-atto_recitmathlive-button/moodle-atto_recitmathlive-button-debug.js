@@ -40,7 +40,7 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
          
     Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_atto.EditorPlugin, [], {
         TEMPLATE: '' +
-            '<div style="margin-bottom:20px"><math-field id="{{component}}input" virtual-keyboard-mode="onfocus">f(x)=</math-field></div>'+
+            '<div style="margin-bottom:20px"><math-field id="{{component}}input" virtual-keyboard-mode="onfocus">{{content}}</math-field></div>'+
             '<button id="{{component}}close" class="btn btn-secondary">{{get_string "close" component}}</button>' +
             '<button class="btn btn-secondary" id="{{component}}submit"> {{get_string "save" component}}</button></div>',
         COMPONENTNAME: 'atto_recitmathlive',
@@ -84,6 +84,11 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
                 
             }
         },
+
+        getSelectedNode: function() {
+            var node = document.getSelection().anchorNode;
+            return (node.nodeType == 3 ? node.parentNode : node);
+        },
     
         open: function(){
             
@@ -101,10 +106,17 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
             }
 
             // Set the dialogue content, and then show the dialogue.
+            var content = 'f(x)=';
+            var node = this.getSelectedNode();
+            if (node && node.classList.contains(this.COMPONENTNAME)){
+                this.selectedNode = node;
+                content = node.innerHTML.replace('\\ ', ' ').replace('\\(', '').replace('\\)', '');
+            }
             var template = Y.Handlebars.compile(this.TEMPLATE);
             var content = Y.Node.create(template({
                     elementid: this.get('host').get('elementid'),
                     component: this.COMPONENTNAME,
+                    content: content,
                     width: window.innerWidth * 0.8,
                     height: window.innerHeight * 0.8,
                 }));
@@ -124,10 +136,16 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
                 ev.preventDefault();
                 var latex = input.getValue('latex');
                 latex = latex.replace(' ', '\\ ');
+                latex = "\\("+latex+"\\)";
                 var host = that.get('host');
                 host.focus();
                 host.restoreSelection();
-                host.insertContentAtFocusPoint("\\("+latex+"\\)");
+                if (that.selectedNode){
+                    that.selectedNode.innerHTML = latex;
+                }else{
+                    host.insertContentAtFocusPoint("<span class='"+that.COMPONENTNAME+"'>"+latex+"</span>");
+                }
+                that.markUpdated();
                 that.close();
             }, false);
 
@@ -137,6 +155,7 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
         this.getDialogue({
             focusAfterHide: null
         }).hide();
+        this.selectedNode = null;
     },
     
 });
