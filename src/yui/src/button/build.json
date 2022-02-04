@@ -1,0 +1,10 @@
+{
+    "name": "moodle-atto_recitmathlive-button",
+    "builds": {
+        "moodle-atto_recitmathlive-button": {
+            "jsfiles": [
+                "button.js"
+            ]
+        }
+    }
+}
