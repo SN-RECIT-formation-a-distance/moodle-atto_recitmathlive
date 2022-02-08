@@ -79,7 +79,14 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
                 var src = M.cfg.wwwroot +'/lib/editor/atto/plugins/recitmathlive/js/mathlive.min.js';
                 var that = this;
                 requirejs([src], function(app) {
-                    that.math = app;
+                    window.MathLive = app;
+                    // Adding submit event.
+                    var form = that.get('host').textarea.ancestor('form');
+
+                    if (form) {
+                        form.on('submit', that.submitAtto, that);
+                    }
+                    setTimeout(function(){that.renderMath()}, 600);
                 });
                 
             }
@@ -108,9 +115,10 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
             // Set the dialogue content, and then show the dialogue.
             var content = 'f(x)=';
             var node = this.getSelectedNode();
+            node = this.getParentFromClass(node, this.COMPONENTNAME);
             if (node && node.classList.contains(this.COMPONENTNAME)){
                 this.selectedNode = node;
-                content = node.innerHTML.replace('\\ ', ' ').replace('\\(', '').replace('\\)', '');
+                content = node.getAttribute('data-latex');
             }
             var template = Y.Handlebars.compile(this.TEMPLATE);
             var content = Y.Node.create(template({
@@ -125,6 +133,7 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
             var closebutton = document.getElementById(this.COMPONENTNAME+'close');
             var submitbutton = document.getElementById(this.COMPONENTNAME+'submit');
             var that = this;
+            var host = that.get('host');
 
             
             closebutton.addEventListener('click', function(ev) {
@@ -134,21 +143,71 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
 
             submitbutton.addEventListener('click', function(ev) {
                 ev.preventDefault();
-                var latex = input.getValue('latex');
-                latex = latex.replace(' ', '\\ ');
-                latex = "\\("+latex+"\\)";
-                var host = that.get('host');
+                var latexorg = input.getValue('latex');
+                var latex = that.formatForMathJaxFilter(latexorg);
                 host.focus();
                 host.restoreSelection();
                 if (that.selectedNode){
                     that.selectedNode.innerHTML = latex;
+                    that.selectedNode.setAttribute('data-latex', latexorg);
                 }else{
-                    host.insertContentAtFocusPoint("<span class='"+that.COMPONENTNAME+"'>"+latex+"</span>");
+                    host.insertContentAtFocusPoint("<span class='"+that.COMPONENTNAME+"' data-latex='"+latexorg+"'>"+latex+"</span>");
                 }
-                that.markUpdated();
                 that.close();
+                setTimeout(function(){//Avoid stack overflow
+                    that.renderMath();
+                    that.markUpdated();
+                }, 500);
             }, false);
+            
+    },
 
+    submitAtto(){
+        this.unrenderMath();
+        this.markUpdated();
+    },
+
+    formatForMathJaxFilter(latex){
+        latex = latex.replace(' ', '\\ ');
+        return "\\("+latex+"\\)";
+    },
+
+    doubleClickHandler(event) {
+        var isformula = this.getParentFromClass(event.target, this.COMPONENTNAME);
+        if (isformula) {
+            event.stopPropagation();
+            this.open();
+        }
+    },
+
+    getParentFromClass(el, cl){
+        if (el.classList.contains(cl)){
+            return el;
+        }
+        while (el = el.parentElement){
+            if (el.classList.contains(cl)){
+                return el;
+            }
+        }
+        return false;
+    },
+
+    renderMath(){
+        var target = this.get('host').editor.getDOMNode();
+        MathLive.renderMathInElement(target);
+        var els = target.querySelectorAll('.'+this.COMPONENTNAME);
+        for (var el of els){
+            el.ondblclick = this.doubleClickHandler.bind(this);
+        }
+    },
+
+    unrenderMath(){
+        var target = this.get('host').editor.getDOMNode();
+        var els = target.querySelectorAll('.'+this.COMPONENTNAME);
+        for (var el of els){
+            var latex = el.getAttribute('data-latex');
+            el.innerHTML = this.formatForMathJaxFilter(latex);
+        }
     },
 
     close: function(){
