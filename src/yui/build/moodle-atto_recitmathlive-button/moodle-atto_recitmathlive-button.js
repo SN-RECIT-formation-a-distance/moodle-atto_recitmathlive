@@ -194,11 +194,43 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
 
     renderMath(){
         var target = this.get('host').editor.getDOMNode();
-        MathLive.renderMathInElement(target);
         var els = target.querySelectorAll('.'+this.COMPONENTNAME);
         for (var el of els){
             el.ondblclick = this.doubleClickHandler.bind(this);
+            var latex = el.getAttribute('data-latex');
+            el.innerHTML = "<math-field virtual-keyboard-mode=\"onfocus\" style='display:inline-block' default-mode='inline-math'>"+latex+"</math-field>";
         }
+        MathLive.renderMathInElement(target);
+        
+        els = target.querySelectorAll('.'+this.COMPONENTNAME+' math-field');
+        for (var el of els){
+            el.addEventListener('focus', this.onFocus.bind(this));
+            el.addEventListener('blur', this.onBlur.bind(this));
+        }
+    },
+
+    onFocus(e){
+        var host = this.get('host');
+        if (e.isTrusted){
+            this.selectedNode = e.target.parentElement;
+            host.editor.getDOMNode().setAttribute('contenteditable', 'false');
+            host.saveSelection();
+        }
+    },
+
+    onBlur(e){ 
+        var host = this.get('host');
+        if (e.isTrusted && this.selectedNode){
+            var latexorg = this.selectedNode.children[0].getValue('latex');
+            host.editor.getDOMNode().setAttribute('contenteditable', 'true');
+            host.focus();
+            host.restoreSelection();
+            if (this.selectedNode){
+                this.selectedNode.setAttribute('data-latex', latexorg);
+            }
+            this.selectedNode = null;
+        }
+
     },
 
     unrenderMath(){
