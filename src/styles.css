@@ -1,3 +1,8 @@
 .ML__keyboard {
     z-index: 9999 !important;
 }
+
+.editor_atto_content_wrap .atto_recitmathlive .ML__base {
+    cursor: pointer !important;
+    color: #5898db;
+}

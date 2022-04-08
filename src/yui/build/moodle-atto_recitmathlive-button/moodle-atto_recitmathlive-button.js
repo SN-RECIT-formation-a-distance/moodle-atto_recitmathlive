@@ -41,8 +41,8 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
     Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_atto.EditorPlugin, [], {
         TEMPLATE: '' +
             '<div style="margin-bottom:20px"><math-field id="{{component}}input" virtual-keyboard-mode="onfocus">{{content}}</math-field></div>'+
-            '<button id="{{component}}close" class="btn btn-secondary">{{get_string "close" component}}</button>' +
-            '<button class="btn btn-secondary" id="{{component}}submit"> {{get_string "save" component}}</button></div>',
+            '<div style="text-align:right"><button id="{{component}}close" class="btn btn-secondary">{{get_string "close" component}}</button>' +
+            '<button class="btn btn-primary" id="{{component}}submit"> {{get_string "save" component}}</button></div>',
         COMPONENTNAME: 'atto_recitmathlive',
         /**
          * A reference to the current selection at the time that the dialogue
@@ -94,6 +94,7 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
 
         getSelectedNode: function() {
             var node = document.getSelection().anchorNode;
+            if (!node) return null;
             return (node.nodeType == 3 ? node.parentNode : node);
         },
     
@@ -114,11 +115,15 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
 
             // Set the dialogue content, and then show the dialogue.
             var content = 'f(x)=';
-            var node = this.getSelectedNode();
-            node = this.getParentFromClass(node, this.COMPONENTNAME);
-            if (node && node.classList.contains(this.COMPONENTNAME)){
-                this.selectedNode = node;
-                content = node.getAttribute('data-latex');
+            if (!this.selectedNode){
+                var node = this.getSelectedNode();
+                node = this.getParentFromClass(node, this.COMPONENTNAME);
+                if (node && node.classList.contains(this.COMPONENTNAME)){
+                    this.selectedNode = node;
+                    content = node.getAttribute('data-latex');
+                }
+            }else{
+                content = this.selectedNode.getAttribute('data-latex');
             }
             var template = Y.Handlebars.compile(this.TEMPLATE);
             var content = Y.Node.create(template({
@@ -175,12 +180,14 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
     doubleClickHandler(event) {
         var isformula = this.getParentFromClass(event.target, this.COMPONENTNAME);
         if (isformula) {
+            this.selectedNode = isformula;
             event.stopPropagation();
             this.open();
         }
     },
 
     getParentFromClass(el, cl){
+        if (!el) return false;
         if (el.classList.contains(cl)){
             return el;
         }
@@ -197,7 +204,8 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
         MathLive.renderMathInElement(target);
         var els = target.querySelectorAll('.'+this.COMPONENTNAME);
         for (var el of els){
-            el.ondblclick = this.doubleClickHandler.bind(this);
+            el.onclick = this.doubleClickHandler.bind(this);
+            el.setAttribute('contenteditable', 'false');
         }
     },
 

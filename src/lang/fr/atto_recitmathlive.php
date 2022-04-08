@@ -16,8 +16,8 @@
 
 
 $string['pluginname'] = 'Math live RÉCIT';
-$string['save'] = 'Enregistrer';
-$string['close'] = 'Fermer';
+$string['save'] = 'Appliquer';
+$string['close'] = 'Annuler';
 $string['uploading'] = 'Téléversement en cours';
 $string['error'] = 'Une erreur est survenue';
 
