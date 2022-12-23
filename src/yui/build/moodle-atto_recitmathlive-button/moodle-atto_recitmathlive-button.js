@@ -40,7 +40,7 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
          
     Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_atto.EditorPlugin, [], {
         TEMPLATE: '' +
-            '<div style="margin-bottom:20px"><math-field id="{{component}}input" virtual-keyboard-mode="onfocus">{{content}}</math-field></div>'+
+            '<div style="margin-bottom:20px;height:300px;overflow-y:auto" id="{{component}}inputblock"></div>'+
             '<div style="text-align:right"><button id="{{component}}close" class="btn btn-secondary">{{get_string "close" component}}</button>' +
             '<button class="btn btn-primary" id="{{component}}submit"> {{get_string "save" component}}</button></div>',
         COMPONENTNAME: 'atto_recitmathlive',
@@ -88,6 +88,22 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
                     }
                     setTimeout(function(){that.renderMath()}, 600);
                 });
+                if(M.filter_mathjaxloader){
+                    window.MathJaxd = {
+                        jax: ["input/TeX", "output/SVG"],
+                        extensions: ["tex2jax.js", "MathMenu.js", "MathZoom.js"],
+                        showMathMenu: false,
+                        showProcessingMessages: false,
+                        messageStyle: "none",
+                        SVG: {
+                          useGlobalCache: false
+                        },
+                        TeX: {
+                          extensions: ["AMSmath.js", "AMSsymbols.js", "autoload-all.js"]
+                        },
+                    }
+                    M.filter_mathjaxloader.typeset(); 
+                }
                 
             }
         },
@@ -117,28 +133,40 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
             var content = 'f(x)=';
             if (!this.selectedNode){
                 var node = this.getSelectedNode();
-                node = this.getParentFromClass(node, this.COMPONENTNAME);
-                if (node && node.classList.contains(this.COMPONENTNAME)){
+                node = this.getParentFromClass(node, this.COMPONENTNAME+'block');
+                if (node && node.classList.contains(this.COMPONENTNAME+'block')){
                     this.selectedNode = node;
-                    content = node.getAttribute('data-latex');
                 }
-            }else{
-                content = this.selectedNode.getAttribute('data-latex');
             }
+            
+            var mathList = [];
+            if (this.selectedNode){
+                mathList = this.selectedNode.querySelectorAll('.'+this.COMPONENTNAME);
+            }
+            
             var template = Y.Handlebars.compile(this.TEMPLATE);
             var content = Y.Node.create(template({
                     elementid: this.get('host').get('elementid'),
                     component: this.COMPONENTNAME,
-                    content: content,
                     width: window.innerWidth * 0.8,
                     height: window.innerHeight * 0.8,
                 }));
             this.dialogue.set('bodyContent', content).show();
-            var input = document.getElementById(this.COMPONENTNAME+'input');
+            var inputs = document.getElementById(this.COMPONENTNAME+'inputblock');
             var closebutton = document.getElementById(this.COMPONENTNAME+'close');
             var submitbutton = document.getElementById(this.COMPONENTNAME+'submit');
             var that = this;
             var host = that.get('host');
+
+            //Load
+            if (mathList.length == 0){
+                that.createField('f(x)=', false);
+            }else{
+                for (var math of mathList){
+                    var latex = math.getAttribute('data-latex');
+                    var input = that.createField(latex, true);
+                }
+            }
 
             
             closebutton.addEventListener('click', function(ev) {
@@ -148,15 +176,19 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
 
             submitbutton.addEventListener('click', function(ev) {
                 ev.preventDefault();
-                var latexorg = input.getValue('latex');
-                var latex = that.formatForMathJaxFilter(latexorg);
+                var inputList = inputs.getElementsByTagName('math-field')
+                var html = '';
+                for (var input of inputList){
+                    var latexorg = input.getValue('latex');
+                    var latex = that.formatForMathJaxFilter(latexorg);
+                    html = html + "<span class='"+that.COMPONENTNAME+"' data-latex='"+latexorg+"'>"+latex+"</span>" + '<br>';
+                }
                 host.focus();
                 host.restoreSelection();
                 if (that.selectedNode){
-                    that.selectedNode.innerHTML = latex;
-                    that.selectedNode.setAttribute('data-latex', latexorg);
+                    that.selectedNode.innerHTML = html;
                 }else{
-                    host.insertContentAtFocusPoint("<span class='"+that.COMPONENTNAME+"' data-latex='"+latexorg+"'>"+latex+"</span>");
+                    host.insertContentAtFocusPoint("<span class='"+that.COMPONENTNAME+"block'>"+html+"</span>");
                 }
                 that.close();
                 setTimeout(function(){//Avoid stack overflow
@@ -164,7 +196,39 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
                     that.markUpdated();
                 }, 500);
             }, false);
+
+            inputs.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    that.createField('', true);
+                }
+            });
             
+    },
+
+    createField(content, deleteBtn){
+        var inputs = document.getElementById(this.COMPONENTNAME+'inputblock');
+        var el = document.createElement('math-field');
+        el.classList.add('d-inline-block');
+        el.style.minWidth = '300px'
+        el.setAttribute('virtual-keyboard-mode', 'onfocus');
+        el.innerText = content;
+        inputs.append(el);
+        el.focus();
+
+        if (deleteBtn){
+            var del = document.createElement('a');
+            del.innerHTML = "<i class='fa fa-times'></i>";
+            del.href = '#';
+            del.style.color = '#ff0000';
+            del.addEventListener('click', () => {
+                el.remove();
+                del.remove();
+            })
+            inputs.append(del);
+        }
+
+        var br = document.createElement('br');
+        inputs.append(br);
     },
 
     submitAtto(){
@@ -178,7 +242,7 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
     },
 
     doubleClickHandler(event) {
-        var isformula = this.getParentFromClass(event.target, this.COMPONENTNAME);
+        var isformula = this.getParentFromClass(event.target, this.COMPONENTNAME+'block');
         if (isformula) {
             this.selectedNode = isformula;
             event.stopPropagation();
@@ -198,14 +262,45 @@ YUI.add('moodle-atto_recitmathlive-button', function (Y, NAME) {
         }
         return false;
     },
+    
+    tex2img(formula, callback, args) {
+        MathJax.Hub.Queue(function () {
+            var wrapper = MathJax.HTML.Element("span", {}, formula);
+            MathJax.Hub.Typeset(wrapper, function () {
+                var svg = wrapper.getElementsByTagName("svg")[0];
+                if (!svg){
+                    callback(wrapper.innerHTML, args);
+                    return;
+                }
+                svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+                var image = new Image();
+                image.src = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(svg.outerHTML)));
+                image.onload = function () {
+                    var canvas = document.createElement('canvas');
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    var context = canvas.getContext('2d');
+                    context.drawImage(image, 0, 0);
+                    var img = '<img src="' + canvas.toDataURL('image/png') + '"/>';
+                    callback(img, args);
+                };
+            });
+        })
+    },
 
     renderMath(){
         var target = this.get('host').editor.getDOMNode();
-        MathLive.renderMathInElement(target);
+        //MathLive.renderMathInElement(target);
         var els = target.querySelectorAll('.'+this.COMPONENTNAME);
         for (var el of els){
-            el.onclick = this.doubleClickHandler.bind(this);
-            el.setAttribute('contenteditable', 'false');
+            var latexorg = el.getAttribute('data-latex');
+            var latex = this.formatForMathJaxFilter(latexorg);
+            
+            this.tex2img(latex, (img, el) => {
+                el.innerHTML = img;
+                el.onclick = this.doubleClickHandler.bind(this);
+                el.setAttribute('contenteditable', 'false');
+            }, el); 
         }
     },
 
