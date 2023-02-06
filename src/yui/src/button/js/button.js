@@ -74,9 +74,11 @@
                     buttonName: 'recitmathlive'
                 });
                 
-                var src = M.cfg.wwwroot +'/lib/editor/atto/plugins/recitmathlive/js/mathlive.min.js';
+                var src = M.cfg.wwwroot +'/lib/editor/atto/plugins/recitmathlive/js/';
                 var that = this;
-                requirejs([src], function(app) {
+
+
+                requirejs([src+'mathlive.min.js'], function(app) {
                     window.MathLive = app;
                     // Adding submit event.
                     var form = that.get('host').textarea.ancestor('form');
@@ -84,23 +86,31 @@
                     if (form) {
                         form.on('submit', that.submitAtto, that);
                     }
-                    setTimeout(function(){that.renderMath()}, 600);
+                    setTimeout(that.renderMath.bind(that), 500)
                 });
-                if(M.filter_mathjaxloader){
-                    window.MathJaxd = {
-                        jax: ["input/TeX", "output/SVG"],
-                        extensions: ["tex2jax.js", "MathMenu.js", "MathZoom.js"],
-                        showMathMenu: false,
-                        showProcessingMessages: false,
-                        messageStyle: "none",
-                        SVG: {
-                          useGlobalCache: false
-                        },
-                        TeX: {
-                          extensions: ["AMSmath.js", "AMSsymbols.js", "autoload-all.js"]
-                        },
-                    }
+                if(M.filter_mathjaxloader && window.MathJax){
                     M.filter_mathjaxloader.typeset(); 
+                }else{
+                    if (!document.getElementById('recitmathjax')){
+                        window.MathJax = {
+                            jax: ["input/TeX", "output/SVG"],
+                            extensions: ["tex2jax.js", "MathMenu.js", "MathZoom.js"],
+                            showMathMenu: false,
+                            showProcessingMessages: false,
+                            messageStyle: "none",
+                            SVG: {
+                              useGlobalCache: false
+                            },
+                            TeX: {
+                              extensions: ["AMSmath.js", "AMSsymbols.js", "autoload-all.js"]
+                            },
+                        }
+                        var script = document.createElement('script');
+                        script.setAttribute('src', 'https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/latest.js');
+                        script.setAttribute('id', 'recitmathjax');
+                        script.setAttribute('type', 'text/javascript');
+                        document.getElementsByTagName('head')[0].appendChild(script);
+                    }
                 }
                 
             }
@@ -156,6 +166,15 @@
             var that = this;
             var host = that.get('host');
 
+            this.plus = document.createElement('a');
+            this.plus.innerHTML = "<i class='fa fa-plus'></i><br>";
+            this.plus.href = '#';
+            this.plus.style.color = '#000';
+            this.plus.addEventListener('click', () => {
+                this.createField('', true);
+            })
+            inputs.append(this.plus);
+            
             //Load
             if (mathList.length == 0){
                 that.createField('f(x)=', false);
@@ -178,15 +197,18 @@
                 var html = '';
                 for (var input of inputList){
                     var latexorg = input.getValue('latex');
-                    var latex = that.formatForMathJaxFilter(latexorg);
-                    html = html + "<span class='"+that.COMPONENTNAME+"' data-latex='"+latexorg+"'>"+latex+"</span>" + '<br>';
+                    if (latexorg.trim().length > 0){
+                        var latex = that.formatForMathJaxFilter(latexorg);
+                        html = html + "<span class='"+that.COMPONENTNAME+"block'><span class='"+that.COMPONENTNAME+"' data-latex='"+latexorg+"'>"+latex+"</span><br></span>";
+                    }
                 }
                 host.focus();
                 host.restoreSelection();
                 if (that.selectedNode){
                     that.selectedNode.innerHTML = html;
                 }else{
-                    host.insertContentAtFocusPoint("<span class='"+that.COMPONENTNAME+"block'>"+html+"</span>");
+                    //host.insertContentAtFocusPoint("<span class='"+that.COMPONENTNAME+"block'>"+html+"</span>");
+                    host.insertContentAtFocusPoint(html);
                 }
                 that.close();
                 setTimeout(function(){//Avoid stack overflow
@@ -203,15 +225,26 @@
             
     },
 
-    createField(content, deleteBtn){
+    createField(content, deleteBtn, before){
+        var div = document.createElement('div');
+        if (deleteBtn){
+            var del = document.createElement('a');
+            del.innerHTML = "<i class='fa fa-plus'></i><br>";
+            del.href = '#';
+            del.style.color = '#000';
+            del.addEventListener('click', () => {
+                this.createField('', true, div);
+            })
+            div.append(del);
+        }
+
         var inputs = document.getElementById(this.COMPONENTNAME+'inputblock');
         var el = document.createElement('math-field');
         el.classList.add('d-inline-block');
         el.style.minWidth = '300px'
         el.setAttribute('virtual-keyboard-mode', 'onfocus');
         el.innerText = content;
-        inputs.append(el);
-        el.focus();
+        div.append(el);
 
         if (deleteBtn){
             var del = document.createElement('a');
@@ -222,11 +255,15 @@
                 el.remove();
                 del.remove();
             })
-            inputs.append(del);
+            div.append(del);
         }
 
-        var br = document.createElement('br');
-        inputs.append(br);
+        if (before){
+            before.before(div);
+        }else{
+            this.plus.before(div);
+        }
+        el.focus();
     },
 
     submitAtto(){
@@ -292,11 +329,11 @@
         var els = target.querySelectorAll('.'+this.COMPONENTNAME);
         for (var el of els){
             var latexorg = el.getAttribute('data-latex');
+            el.onclick = this.doubleClickHandler.bind(this);
             var latex = this.formatForMathJaxFilter(latexorg);
             
             this.tex2img(latex, (img, el) => {
                 el.innerHTML = img;
-                el.onclick = this.doubleClickHandler.bind(this);
                 el.setAttribute('contenteditable', 'false');
             }, el); 
         }
