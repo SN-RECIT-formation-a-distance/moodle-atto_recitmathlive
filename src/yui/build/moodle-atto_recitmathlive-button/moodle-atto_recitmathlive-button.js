@@ -43,11 +43,12 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
      */
     initializer: function() {
         this.addButton({
-            title: 'pluginname',
-            icon: 'math',
-            iconComponent: 'atto_recitmathlive',
+            icon: 'e/calculator',
+//            iconComponent: 'atto_recitmathlive',
             callback: this.openModal,
-            buttonName: 'recitmathlive'
+            buttonName: 'recitmathlive',
+             // Watch the following tags and add/remove highlighting as appropriate:
+             tags: 'math, mtable, mtr, mtd, mrow mn'
         });
 
         this.editor._node.addEventListener("click", this.onAttoClick.bind(this), false);
@@ -58,21 +59,46 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         selectedNode: null
     },
 
+    addRecitMathLiveReactJs(){
+        let id = "recitmathlivereactjs";
+
+        if(document.getElementById(id)){
+            this.onLoadUI();
+            return;
+        }
+
+        var url = M.cfg.wwwroot;
+        var js = url +"/lib/editor/atto/plugins/recitmathlive/react/build/index.js";
+        var script = document.createElement('script');
+        script.onload = this.onLoadUI.bind(this);
+        script.setAttribute('src', js);
+        script.setAttribute('id', id);
+        script.setAttribute('type', 'text/javascript');
+        document.getElementsByTagName('head')[0].appendChild(script);
+    },
+
+    getMathMlElement(dom){
+        let result = null;
+        
+        let el = dom; 
+        while(el instanceof MathMLElement){
+            if(el.tagName.toLocaleLowerCase() === "math"){
+                result = el;
+            }
+
+            el = el.parentNode;
+        }
+
+        return result;
+    },
+
     onAttoClick: function(e){
         e.stopPropagation();
         
         let result = null;
         
         if(e.target){
-            let el = e.target; 
-            
-            while(el instanceof MathMLElement){
-                if(el.tagName.toLocaleLowerCase() === "math"){
-                    result = el;
-                }
-
-                el = el.parentNode;
-            }
+            result = this.getMathMlElement(e.target);
         }
 
         this.myAttr.selectedNode = result;
@@ -87,29 +113,15 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
             e.preventDefault();
         }
         
-        var url = M.cfg.wwwroot;
-        var js = url +"/lib/editor/atto/plugins/recitmathlive/react/build/index.js";
-        //var css = url +"/lib/editor/atto/plugins/recitmathlive/build/index.css";
-        
         var content = document.createElement('div');
         content.setAttribute('id', 'recitmathlive_container');
         this.createPopup(content);
-
-        var script = document.createElement('script');
-        script.onload = this.onloadUi.bind(this);
-        script.setAttribute('src', js);
-        script.setAttribute('id', 'recitmathlive');
-        script.setAttribute('type', 'text/javascript');
-        document.getElementsByTagName('head')[0].appendChild(script);
-        /*script = document.createElement('link');
-        script.setAttribute('href', css);
-        script.setAttribute('rel', 'stylesheet');
-        document.getElementsByTagName('head')[0].appendChild(script);*/
+        this.addRecitMathLiveReactJs();
     },
     
     createPopup: function(content) {        
         let modal = document.createElement('div');
-        modal.classList.add('modal', 'fade', 'autolink_popup');
+        modal.classList.add('modal', 'fade');
         modal.setAttribute('style', 'overflow-y: hidden;');
         let inner2 = document.createElement('div');
         inner2.classList.add('modal-dialog');
@@ -136,9 +148,9 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         
         document.body.appendChild(modal);
         this.myAttr.popup = modal;
-        $(modal).modal({show: true, backdrop: true});
+        $(modal).modal({show: true, backdrop: 'static', keyboard: false});
         let that = this;
-        $(".modal-backdrop").click(() => $(this.myAttr.popup).modal('hide'));
+        //$(".modal-static").click(() => $(this.myAttr.popup).modal('hide'));
         $(modal).on('hidden.bs.modal', function (e) {
             that.destroy();
         });
@@ -154,7 +166,7 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         $(this.myAttr.popup).modal('handleUpdate');
     },
 
-    onloadUi: function(){
+    onLoadUI: function(){
         if (!window.openrecitmathliveui){
             throw new Error("Interface openrecitmathliveui not defined.");
         }
@@ -170,77 +182,24 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
     },
     
     onApply: function(content){        
-        if(content.length === 0){
-            this.onClose();
-            return;
-        }
-        
         let host = this.get('host');
         
-//        console.log(host, this, this.editor.getHTML());
         host.focus();
+
         if(this.myAttr.selectedNode){
             this.myAttr.selectedNode.remove();
         }
         
-        host.insertContentAtFocusPoint(content)
-
-       // host.restoreSelection();
-       // console.log(formula, this.editor, host);
-
-        /*formula = "2^2";
-        formula = this.tex2MathJax(formula);
-        this.tex2img(formula, function(output) {
-            console.log(output);
-            host.insertContentAtFocusPoint(output);
-        });*/
+        if(content.length > 0){
+            host.insertContentAtFocusPoint(content);
+        }
 
         this.onClose();
     },
 
     onClose: function(){
         this.destroy();
-    },
-
-   /* tex2MathJax(latex){
-        latex = latex.replace(' ', '\\ ');
-        return "\\("+latex+"\\)";
-    },*/
-
-    /*tex2img(formula, callback) {
-        MathJax.Hub.Queue(() => {
-            let wrapper = MathJax.HTML.Element("span", {}, formula);
-           
-            MathJax.Hub.Typeset(wrapper, () => {
-                var svg = wrapper.getElementsByTagName("svg")[0];
-                if (!svg){
-					var div = document.createElement('div');
-					div.style.width = 'fit-content';
-					div.innerHTML = wrapper.innerHTML;
-					document.body.appendChild(div)
-					html2canvas(div).then(canvas => {
-						var img = '<img src="' + canvas.toDataURL('image/png') + '"/>';
-						callback(img, args);
-						div.remove();
-					});
-                    return;
-                }
-                svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                var image = new Image();
-                image.src = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(svg.outerHTML)));
-                image.onload = function () {
-                    var canvas = document.createElement('canvas');
-                    canvas.width = image.width;
-                    canvas.height = image.height;
-                    var context = canvas.getContext('2d');
-                    context.drawImage(image, 0, 0);
-                    var img = '<img src="' + canvas.toDataURL('image/png') + '"/>';
-                    callback(img, args);
-                };
-            });
-        })
-
-    }*/
+    }  
 });
 
 

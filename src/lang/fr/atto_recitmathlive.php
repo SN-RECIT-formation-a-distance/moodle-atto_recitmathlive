@@ -18,8 +18,6 @@
 $string['pluginname'] = 'Math live RÉCIT';
 $string['save'] = 'Appliquer';
 $string['close'] = 'Annuler';
-$string['uploading'] = 'Téléversement en cours';
 $string['error'] = 'Une erreur est survenue';
-
 $string['privacy:metadata'] = 'Le atto_recitmathlive plugin ne store pas de données personnelles.';
 

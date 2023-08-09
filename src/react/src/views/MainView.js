@@ -116,15 +116,18 @@ export class MainView extends Component {
 
     setInitialValue(){
         //let content  = '<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">    <msup>        <mn>6</mn>        <mn>2</mn>    </msup></math>';
-        let data = this.state.data;
+        let data = [];
         let content  = this.props.attoInterface.getContent();
 
         if(content.length !== 0){
-            content = Mathml2latex.convert(content);
+            content = Mathml2latex.convert(content); 
+            content = content.replace(/\\\\\s\\\\/g,'\\\\'); 
+            data = content.split('\\\\'); 
+        } 
+        else{ 
+            data.push("");
         }
 
-        data.push(content);
-        
         this.setState({data:data});
     }
 
@@ -154,16 +157,24 @@ export class MainView extends Component {
 
     onApply(){ 
         let pList = [];
-        for(let item of this.state.data){
+        /*for(let item of this.state.data){
             if (item.trim().length === 0){ continue; }
             
             let p = this.myMathJax.tex2mmlPromise(item);
 
-            /*MathJax.startup.document.state(0);
-                MathJax.texReset();*/
             pList.push(p);
-        }
+        }*/
 
+        let newLine = '\\\\';
+        let formula = "\\begin{equation}";
+        formula += "\\begin{aligned}";
+        formula += this.state.data.join(newLine+newLine);
+        formula += "\\end{aligned}";
+        formula += "\\end{equation}";
+
+        let p = this.myMathJax.tex2mmlPromise(formula);
+        pList.push(p);
+ 
         Promise.all(pList).then((values) => {
             this.props.attoInterface.onApply(values.join(""));     
         },
