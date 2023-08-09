@@ -43,10 +43,9 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
      */
     initializer: function() {
         this.addButton({
-            icon: 'e/calculator',
+            icon: 'e/math',
 //            iconComponent: 'atto_recitmathlive',
             callback: this.openModal,
-            buttonName: 'recitmathlive',
              // Watch the following tags and add/remove highlighting as appropriate:
              tags: 'math, mtable, mtr, mtd, mrow mn'
         });
