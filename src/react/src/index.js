@@ -21,7 +21,6 @@
 import React, { Component } from 'react';
 import { createRoot } from 'react-dom/client';
 import {MainView} from "./views/MainView";
-import {$glVars} from "./common/common";
 import { Options } from './common/Options';
  
 class App extends Component {
