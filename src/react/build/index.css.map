@@ -1,0 +1,1 @@
+{"version":3,"sources":["libs/mathlive/variables.css"],"names":[],"mappings":"AAAA;AACA;AACA;AACA","file":"index.css","sourceRoot":"..\\src","sourcesContent":["\r\nhtml{\r\n    --keyboard-toolbar-background: #FFF;\r\n}"]}
