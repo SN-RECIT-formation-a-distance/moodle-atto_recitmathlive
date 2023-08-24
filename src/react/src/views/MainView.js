@@ -431,15 +431,15 @@ export class MainView extends Component {
 
     loadMathLive(){
         if(this.mathliveRef.current && this.mathlivePlaceholder.current){
+            //this.mathlivePlaceholder.current.mathVirtualKeyboardPolicy = "manual";
             window.mathVirtualKeyboard.container = this.mathlivePlaceholder.current;
-            window.mathVirtualKeyboard.show();
+            //window.mathVirtualKeyboard.show(); 
             this.mathliveRef.current.focus();
             this.setState({mathLiveReady: true}, this.onComponentReady);
 
             /*that.mathliveRef.current.addEventListener("focus", (evt) => {
                 console.log("pum")
             });
-            that.mathliveRef.current.addEventListener("focusin", (evt) => window.mathVirtualKeyboard.show());
             that.mathliveRef.current.addEventListener("focusout", (evt) => window.mathVirtualKeyboard.hide());
             console.log(that.mathliveRef.current.mathVirtualKeyboardPolicy, that.mathliveRef.current)*/
         } 
@@ -483,7 +483,11 @@ export class MainView extends Component {
         }  
     } 
 
-    render() {       
+    render() {      
+        if(window.mathVirtualKeyboard){
+            window.mathVirtualKeyboard.show();  
+        }
+
         let main = 
             <div>
                 <div style={{minWidth:320}}>
@@ -491,10 +495,10 @@ export class MainView extends Component {
                         <div key={index} className='mb-3 d-flex'>
                             {this.state.iEditingItem === index ?
                                 <math-field ref={this.mathliveRef} style={{width: "100%"}} onInput={(event) => this.onDataChange(event, index)}> 
-                                    {item.latex} 
+                                    {item.latex}
                                 </math-field>
                                 :
-                                <div className='w-100' style={{fontSize: '1.5rem'}} dangerouslySetInnerHTML={{__html: this.myMathJax.tex2mml(item.latex)}} />
+                                <div className='w-100' style={{fontSize: '1rem'}} dangerouslySetInnerHTML={{__html: this.myMathJax.tex2mml(item.latex)}} />
                             }
 
                             <ButtonGroup className='ml-3'>
@@ -509,7 +513,7 @@ export class MainView extends Component {
 
                 <hr/>
 
-                <div className='mb-5' ref={this.mathlivePlaceholder} style={{height: (window.mathVirtualKeyboard.visible ? 230 : 0)}}></div>
+                <div className='mb-5' ref={this.mathlivePlaceholder} style={{height: 230}}></div>
 
                 <ButtonGroup className='float-right'>
                     <Button variant='secondary' onClick={this.onCancel}>Annuler</Button> 
@@ -541,6 +545,8 @@ export class MainView extends Component {
                 data.push({latex: item})
             }
 
+            this.mathliveRef.current.setValue(data[0].latex, {suppressChangeNotifications: true});
+
             this.setState({data:data});
         } 
     }
@@ -553,17 +559,14 @@ export class MainView extends Component {
 
     onEdit(index){
         this.setState({iEditingItem: index}, () => { 
-            window.mathVirtualKeyboard.show();
             this.mathliveRef.current.focus(); 
         });
     }
 
     onAdd(){
-        window.mathVirtualKeyboard.show();
         let data = this.state.data;
         data.push({latex: ""});
         this.setState({data: data, iEditingItem: data.length - 1}, () => { 
-            window.mathVirtualKeyboard.show();
             this.mathliveRef.current.focus(); 
         });
     }
