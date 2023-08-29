@@ -24,11 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2022020900;
-$plugin->requires  = 2020061500.00; // Moodle 3.9.0
+$plugin->version = 2023082900;
+$plugin->requires = 2022041200; // Moodle 4.0.1+ 
 $plugin->component = 'atto_recitmathlive';
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release = 'v1.0.0';
-$plugin->depedencies = [
-    'filter_mathjaxloader' => 2020061500
-];
+$plugin->release = 'v1.0.0-alpha';
+$plugin->supported = [400, 410];
