@@ -51,6 +51,7 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         });
 
         this.editor._node.addEventListener("click", this.onAttoClick.bind(this), false);
+        this.editor._node.addEventListener("keydown", this.onAttoKeyDown.bind(this));
     },
 
     myAttr: {
@@ -80,15 +81,28 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         let result = null;
         
         let el = dom; 
-        while(el instanceof MathMLElement){
-            if(el.tagName.toLocaleLowerCase() === "math"){
+        do{
+            if(el && el.tagName && el.tagName.toLocaleLowerCase() === "math"){
                 result = el;
             }
 
             el = el.parentNode;
         }
+        while(el instanceof MathMLElement);
 
         return result;
+    },
+
+    onAttoKeyDown: function(e){
+        let selectionObj = window.getSelection();
+
+        if(selectionObj.type === 'Caret'){
+            let mathNode = this.getMathMlElement(selectionObj.anchorNode);
+            if(mathNode){
+                e.preventDefault();
+                return false;
+            }
+        }
     },
 
     onAttoClick: function(e){
@@ -190,6 +204,10 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         }
         
         if(content.length > 0){
+            if(this.editor.getHTML().length === 0){
+                content = `<p>&nbsp;</p>${content}<p>&nbsp;</p>`
+            }
+            
             host.insertContentAtFocusPoint(content);
         }
 
