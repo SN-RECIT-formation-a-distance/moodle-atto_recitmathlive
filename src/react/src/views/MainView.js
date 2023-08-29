@@ -27,9 +27,16 @@ import Mathml2latex from'mathml-to-latex';
 import { ToggleButtons } from '../libs/components/ToggleButtons';
 
 export class MainView extends Component {
-    static virtualKeyboard = {
-        customVirtualKeyboardLayers: {
-            Tab: {
+    static customVirtualKeyboard = {
+        layers: [
+            "numeric", 
+            "symbols", 
+            "alphabetic", 
+            "greek",
+            {
+                label: "Tableau periodique",
+                tooltip: "Tableau périodique des principaux éléments",
+                layer: "Tab",
                 styles: "",
                 rows: [
                     [{ class: "", latex: "\\ce{H}", },
@@ -78,7 +85,10 @@ export class MainView extends Component {
                     ],
                 ]
             },
-            chimie: {
+            {
+                label: "Science usuelle",
+                tooltip: "Notations symboliques usuelles en science et technologie",
+                layer: "chimie",
                 rows: [
                     [
                         {
@@ -159,7 +169,10 @@ export class MainView extends Component {
                     ],
                 ],
             },
-            Math: {
+            {
+                label: "Symboles usuelles",
+                tooltip: "Notations symboliques usuelles",
+                layer: "Math",
                 styles: "",
                 rows: [
                     [
@@ -371,25 +384,7 @@ export class MainView extends Component {
                     ]
                 ]
             },
-        },
-        customVirtualKeyboards: {
-            Tab: {
-                label: "Tableau periodique",
-                tooltip: "Tableau périodique des principaux éléments",
-                layer: "Tab"
-            },
-            chimie: {
-                label: "Science usuelle",
-                tooltip: "Notations symboliques usuelles en science et technologie",
-                layer: "chimie"
-            },
-            "highschoolkeyboard": {
-                label: "Symboles usuelles",
-                tooltip: "Notations symboliques usuelles",
-                layer: "Math"
-            }
-        },
-        virtualKeyboards: "highschoolkeyboard Tab greek symbols functions "
+        ],
     };
 
     static defaultProps = {
@@ -453,17 +448,13 @@ export class MainView extends Component {
 
     loadMathLive(){
         if(this.mathliveRef.current && this.mathlivePlaceholder.current){
-            //this.mathlivePlaceholder.current.mathVirtualKeyboardPolicy = "manual";
+            this.mathliveRef.current.mathVirtualKeyboardPolicy = "manual";
+
             window.mathVirtualKeyboard.container = this.mathlivePlaceholder.current;
-            //window.mathVirtualKeyboard.show(); 
+            window.mathVirtualKeyboard.layouts = MainView.customVirtualKeyboard.layers;
+
             this.mathliveRef.current.focus();
             this.setState({mathLiveReady: true}, this.onComponentReady);
-
-            /*that.mathliveRef.current.addEventListener("focus", (evt) => {
-                console.log("pum")
-            });
-            that.mathliveRef.current.addEventListener("focusout", (evt) => window.mathVirtualKeyboard.hide());
-            console.log(that.mathliveRef.current.mathVirtualKeyboardPolicy, that.mathliveRef.current)*/
         } 
         else{
             console.log("Loading MathLive...")
@@ -506,7 +497,7 @@ export class MainView extends Component {
     } 
 
     render() {      
-        if(window.mathVirtualKeyboard){
+        if(window.mathVirtualKeyboard && !window.mathVirtualKeyboard.visible){
             window.mathVirtualKeyboard.show();  
         }
 
