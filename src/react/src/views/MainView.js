@@ -20,10 +20,11 @@
  */
 import React, { Component  } from 'react';
 import "../libs/mathlive/mathlive";
-import { Button, ButtonGroup} from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Form, Row} from 'react-bootstrap';
 import {faPencilAlt, faPlus, faSpinner, faTrashAlt  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Mathml2latex from'mathml-to-latex';
+import { ToggleButtons } from '../libs/components/ToggleButtons';
 
 export class MainView extends Component {
     static virtualKeyboard = {
@@ -399,6 +400,7 @@ export class MainView extends Component {
         super(props);
 
         this.onDataChange = this.onDataChange.bind(this);
+        this.onOptionChange = this.onOptionChange.bind(this);
         this.onAdd = this.onAdd.bind(this);
         this.onEdit = this.onEdit.bind(this);
         this.onDelete = this.onDelete.bind(this);
@@ -410,7 +412,27 @@ export class MainView extends Component {
         this.loadMathJax = this.loadMathJax.bind(this);
         this.loadMathLive = this.loadMathLive.bind(this);
 
-        this.state = {data: [{latex: "", mathml: ""}], iEditingItem: 0, mathLiveReady: false, mathJaxReady: false, componentReady: false};
+        this.state = {
+            data: [{latex: "", mathml: ""}], 
+            iEditingItem: 0,
+            options: {
+                display: 'block',
+                addSpace: '0'
+            },
+            mathLiveReady: false, 
+            mathJaxReady: false, 
+            componentReady: false,
+            dropdownLists:{
+                yesNoList: [
+                    {value: '0', text: 'Non'},
+                    {value: '1', text: 'Oui'},
+                ],
+                displayList: [
+                    {value: 'block', text: 'Bloc'},
+                    {value: 'inline', text: 'En ligne'},
+                ]
+            }
+        };
 
         this.iFrameRef = React.createRef();
         this.mathliveRef = React.createRef();
@@ -508,14 +530,30 @@ export class MainView extends Component {
                             
                         </div>
                     )}
-                    <Button size="sm" onClick={this.onAdd}><FontAwesomeIcon icon={faPlus} title="Ajouter"/></Button>
+                    <Button size="sm" onClick={this.onAdd}><FontAwesomeIcon icon={faPlus} title="Ajouter"/>{" Ajouter une autre ligne"}</Button>
                 </div>
+
+                <div className='mt-2 mb-2' ref={this.mathlivePlaceholder} style={{height: 230}}></div>
 
                 <hr/>
 
-                <div className='mb-5' ref={this.mathlivePlaceholder} style={{height: 230}}></div>
+                <Form.Group as={Row} controlId="formOptions1">
+                    <Form.Label column sm="4">Type d'affichage</Form.Label>
+                    <Col sm="8">
+                        <ToggleButtons name='display' options={this.state.dropdownLists.displayList} value={[this.state.options.display]} type='radio' onChange={this.onOptionChange}/>
+                    </Col>
+                </Form.Group>
 
-                <ButtonGroup className='float-right'>
+                <Form.Group as={Row} controlId="formOptions2">
+                    <Form.Label column sm="4">Ajouter espacement</Form.Label>
+                    <Col sm="8">
+                        <ToggleButtons name='addSpace' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addSpace]} type='radio' onChange={this.onOptionChange}/>
+                    </Col>
+                </Form.Group>
+
+                <hr/>
+
+                <ButtonGroup className='float-right mt-3'>
                     <Button variant='secondary' onClick={this.onCancel}>Annuler</Button> 
                     <Button variant='success' onClick={this.onApply}>Appliquer</Button>
                 </ButtonGroup>
@@ -557,6 +595,12 @@ export class MainView extends Component {
         this.setState({data: data});
     }
 
+    onOptionChange(event){
+        let options = this.state.options;
+        options[event.target.name] = event.target.value;
+        this.setState({options: options});
+    }
+
     onEdit(index){
         this.setState({iEditingItem: index}, () => { 
             this.mathliveRef.current.focus(); 
@@ -585,14 +629,6 @@ export class MainView extends Component {
 
     onApply(){ 
         let pList = [];
-        /*for(let item of this.state.data){
-            if (item.trim().length === 0){ continue; }
-            
-            let p = this.myMathJax.tex2mmlPromise(item);
-
-            pList.push(p);
-        }*/
-
         let newLine = '\\\\';
         let formula = "\\begin{equation}";
         formula += "\\begin{aligned}";
@@ -610,9 +646,25 @@ export class MainView extends Component {
         pList.push(p);
  
         Promise.all(pList).then((values) => {
-           // let result = "<p>&nbsp;</p>";
             let result = values.join("");
-           // result += "<p>&nbsp;</p>";
+            let doc = new DOMParser().parseFromString(result, "text/xml");
+
+            doc.firstChild.setAttribute('display', this.state.options.display);
+
+            if(this.state.options.display === 'block'){
+                doc.firstChild.classList.add("border", "border-secondary", "rounded", "m-auto", "p-2", "d-flex");
+                doc.firstChild.style.width = 'fit-content';
+            }
+            else{
+                doc.firstChild.classList.add("border", "border-secondary", "rounded", "p-2");
+            }
+
+            result = doc.firstChild.outerHTML;
+            
+            if(this.state.options.addSpace === '1'){
+                result =  "<p>&nbsp;</p>" + result +  "<p>&nbsp;</p>";
+            }
+
             this.props.attoInterface.onApply(result);
         },
         (v) => {

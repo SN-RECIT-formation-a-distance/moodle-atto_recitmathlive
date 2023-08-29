@@ -204,9 +204,9 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         }
         
         if(content.length > 0){
-            if(this.editor.getHTML().length === 0){
+            /*if(this.editor.getHTML().length === 0){
                 content = `<p>&nbsp;</p>${content}<p>&nbsp;</p>`
-            }
+            }*/
             
             host.insertContentAtFocusPoint(content);
         }
