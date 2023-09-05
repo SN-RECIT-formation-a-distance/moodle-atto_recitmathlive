@@ -21,7 +21,7 @@
 import React, { Component  } from 'react';
 import "../libs/mathlive/mathlive";
 import { Button, ButtonGroup, Col, Form, Row} from 'react-bootstrap';
-import {faPencilAlt, faPlus, faSpinner, faTrashAlt  } from '@fortawesome/free-solid-svg-icons';
+import {faArrowDown, faArrowUp, faPencilAlt, faPlus, faSpinner, faTrashAlt  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Mathml2latex from'mathml-to-latex';
 import { ToggleButtons } from '../libs/components/ToggleButtons';
@@ -170,7 +170,7 @@ export class MainView extends Component {
                 ],
             },
             {
-                label: "Symboles usuelles",
+                label: "Symboles usuels",
                 tooltip: "Notations symboliques usuelles",
                 layer: "Math",
                 styles: "",
@@ -402,13 +402,14 @@ export class MainView extends Component {
         this.onApply = this.onApply.bind(this);
         this.onCancel = this.onCancel.bind(this);
         this.onComponentReady = this.onComponentReady.bind(this);
+        this.onShift = this.onShift.bind(this);
 
         this.preLoadMathJax = this.preLoadMathJax.bind(this);
         this.loadMathJax = this.loadMathJax.bind(this);
         this.loadMathLive = this.loadMathLive.bind(this);
 
         this.state = {
-            data: [{latex: "", mathml: ""}], 
+            data: [{latex: ""}], 
             iEditingItem: 0,
             options: {
                 display: 'block',
@@ -510,6 +511,7 @@ export class MainView extends Component {
             window.mathVirtualKeyboard.show();  
         }
 
+        console.log(this.state.data)
         let main = 
             <div>
                 <div style={{minWidth:320}}>
@@ -525,7 +527,9 @@ export class MainView extends Component {
 
                             <ButtonGroup className='ml-3'>
                                 <Button size="sm" disabled={index === this.state.iEditingItem} onClick={() => this.onEdit(index)}><FontAwesomeIcon icon={faPencilAlt} title="Modifier"/></Button>
-                                <Button size="sm" disabled={index === 0} onClick={() => this.onDelete(index)}><FontAwesomeIcon icon={faTrashAlt} title="Supprimer"/></Button>
+                                <Button size="sm" disabled={index === 0} onClick={() => this.onShift(index, index-1)}><FontAwesomeIcon icon={faArrowUp} title="Monter"/></Button>
+                                <Button size="sm" disabled={index === this.state.data.length - 1} onClick={() => this.onShift(index, index+1)}><FontAwesomeIcon icon={faArrowDown} title="Descendre"/></Button>
+                                <Button size="sm" disabled={index === 0} onClick={() => this.onDelete(index)}><FontAwesomeIcon icon={faTrashAlt} title="Supprimer"/></Button> 
                             </ButtonGroup>
                             
                         </div>
@@ -533,7 +537,7 @@ export class MainView extends Component {
                     <Button size="sm" onClick={this.onAdd}><FontAwesomeIcon icon={faPlus} title="Ajouter"/>{" Ajouter une autre ligne"}</Button>
                 </div>
 
-                <div className='mt-2 mb-2' ref={this.mathlivePlaceholder} style={{height: 230}}></div>
+                <div className='mt-2 mb-2' ref={this.mathlivePlaceholder} style={{height: 340}}></div>
 
                 <hr/>
 
@@ -607,6 +611,28 @@ export class MainView extends Component {
         this.setState({iEditingItem: index}, () => { 
             this.mathliveRef.current.focus(); 
         });
+    }
+
+    onShift(from, to){
+        let data = this.state.data;
+
+        if((typeof data[from] === 'undefined') || (typeof data[to] === 'undefined')){
+            return;
+        }
+
+        let el = data[from];
+        data.splice(from, 1);
+        data.splice(to, 0, el);
+
+        // force mathlive refresh
+        if(this.state.iEditingItem === from){
+            this.mathliveRef.current.setValue(data[from].latex, {suppressChangeNotifications: true}); 
+        }
+        else if(this.state.iEditingItem === to){
+            this.mathliveRef.current.setValue(data[to].latex, {suppressChangeNotifications: true});
+        }
+        
+        this.setState({data: data});
     }
 
     onAdd(){

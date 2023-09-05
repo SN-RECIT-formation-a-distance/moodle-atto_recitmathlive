@@ -43,7 +43,7 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
      */
     initializer: function() {
         this.addButton({
-            icon: 'e/math',
+            icon: 'atto-icon',
 //            iconComponent: 'atto_recitmathlive',
             callback: this.openModal,
              // Watch the following tags and add/remove highlighting as appropriate:
@@ -141,7 +141,7 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         modal.appendChild(inner2);
         let inner = document.createElement('div');
         inner.classList.add('modal-content');
-        inner.setAttribute('style', 'width: 700px;padding:10px');
+        inner.setAttribute('style', 'width: 850px;');
         inner2.appendChild(inner);
 
         let header = document.createElement('div');
