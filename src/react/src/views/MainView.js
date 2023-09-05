@@ -20,8 +20,8 @@
  */
 import React, { Component  } from 'react';
 import "../libs/mathlive/mathlive";
-import { Button, ButtonGroup, Col, Form, Row} from 'react-bootstrap';
-import {faArrowDown, faArrowUp, faPencilAlt, faPlus, faSpinner, faTrashAlt  } from '@fortawesome/free-solid-svg-icons';
+import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip} from 'react-bootstrap';
+import {faArrowDown, faArrowUp, faInfo, faInfoCircle, faPencilAlt, faPlus, faSpinner, faTrashAlt  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Mathml2latex from'mathml-to-latex';
 import { ToggleButtons } from '../libs/components/ToggleButtons';
@@ -413,7 +413,8 @@ export class MainView extends Component {
             iEditingItem: 0,
             options: {
                 display: 'block',
-                addSpace: '0'
+                addSpace: '0',
+                addBorder: '0'
             },
             mathLiveReady: false, 
             mathJaxReady: false, 
@@ -511,7 +512,6 @@ export class MainView extends Component {
             window.mathVirtualKeyboard.show();  
         }
 
-        console.log(this.state.data)
         let main = 
             <div>
                 <div style={{minWidth:320}}>
@@ -550,9 +550,19 @@ export class MainView extends Component {
 
                 <Form.Group as={Row} controlId="formOptions2">
                     <Form.Label column sm="4">Ajouter espacement</Form.Label>
-                    <Col sm="8">
+                    <Col sm="8" className='d-flex align-items-center'> 
                         <ToggleButtons name='addSpace' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addSpace]} type='radio' onChange={this.onOptionChange}/>
+                        <OverlayTrigger overlay={<Tooltip>{"L'espacement ajoute un saut de paragraphe avant et après la formule afin de pouvoir faciliter l'ajout des autres contenus."}</Tooltip>}><Button size='sm' className='ml-2 rounded-circle'><FontAwesomeIcon icon={faInfoCircle}/> </Button></OverlayTrigger>
                     </Col>
+                    <Form.Text></Form.Text>
+                </Form.Group>
+
+                <Form.Group as={Row} controlId="formOptions3">
+                    <Form.Label column sm="4">Ajouter bordure</Form.Label>
+                    <Col sm="8"> 
+                        <ToggleButtons name='addBorder' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addBorder]} type='radio' onChange={this.onOptionChange}/>
+                    </Col>
+                    <Form.Text></Form.Text>
                 </Form.Group>
 
                 <hr/>
@@ -577,8 +587,14 @@ export class MainView extends Component {
     setInitialValue(){
         let data = [];
         let content  = this.props.attoInterface.getContent();
+        let options = this.state.options;
 
         if(content.length !== 0){
+            let doc = new DOMParser().parseFromString(content, "text/xml");
+            
+            options.display = doc.firstChild.getAttribute('display');
+            options.addBorder = (doc.firstChild.classList.contains('border') ? '1' : '0');
+
             content = Mathml2latex.convert(content); 
             content = content.replace(/\\\\\s\\\\/g,'\\\\'); 
             content = content.split('\\\\'); 
@@ -589,7 +605,7 @@ export class MainView extends Component {
 
             this.mathliveRef.current.setValue(data[0].latex, {suppressChangeNotifications: true});
 
-            this.setState({data:data});
+            this.setState({data:data, options: options});
         } 
 
         window.mathVirtualKeyboard.show();  
@@ -679,11 +695,11 @@ export class MainView extends Component {
 
             doc.firstChild.setAttribute('display', this.state.options.display);
 
-            if(this.state.options.display === 'block'){
+            if((this.state.options.display === 'block') && (this.state.options.addBorder === '1')){
                 doc.firstChild.classList.add("border", "border-secondary", "rounded", "m-auto", "p-2", "d-flex");
                 doc.firstChild.style.width = 'fit-content';
             }
-            else{
+            else if(this.state.options.addBorder === '1'){
                 doc.firstChild.classList.add("border", "border-secondary", "rounded", "p-2");
             }
 
