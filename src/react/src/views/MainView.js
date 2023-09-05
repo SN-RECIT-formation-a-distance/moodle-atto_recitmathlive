@@ -31,8 +31,8 @@ export class MainView extends Component {
         layers: [
             "numeric", 
             "symbols", 
-            "alphabetic", 
-            "greek",
+            //"alphabetic", 
+            //"greek",
             {
                 label: "Tableau periodique",
                 tooltip: "Tableau périodique des principaux éléments",
@@ -116,7 +116,7 @@ export class MainView extends Component {
                         },
 
 
-                        { latex: '\\ce{ H2O}', insert: '\\\(\\ce{H2O}\\\)' },
+                        { latex: '\\ce{H2O}', insert: '\\\(\\ce{H2O}\\\)' },
                     ],
                     [{
                         class: "tex", latex: "m/s^2", aside: "Unités",
@@ -446,7 +446,9 @@ export class MainView extends Component {
         }
     }
 
-    loadMathLive(){
+    loadMathLive(counter){
+        counter = counter || 0;
+
         if(this.mathliveRef.current && this.mathlivePlaceholder.current){
             this.mathliveRef.current.mathVirtualKeyboardPolicy = "manual";
 
@@ -456,33 +458,36 @@ export class MainView extends Component {
             this.mathliveRef.current.focus();
             this.setState({mathLiveReady: true}, this.onComponentReady);
         } 
-        else{
-            console.log("Loading MathLive...")
+        else if(counter <= 7){ 
+            console.log(`Loading MathLive ${counter}...`);
             window.setTimeout(this.loadMathLive, 500);
         }
+        else{
+            alert(`RÉCIT MathLive: Failed to load MathLive.`);
+            this.props.attoInterface.onClose();
+        }  
     }
 
-    preLoadMathJax(){
+    preLoadMathJax(counter){
+        counter = counter || 0;
+
         let iFrame = this.iFrameRef.current
 
         if(iFrame){
-            let subWindow = iFrame.contentWindow || iFrame.contentDocument;
-            let head = subWindow.document.head;
-    
-            let el = subWindow.document.createElement("script");
-            el.setAttribute("type", "text/javascript");
-            el.setAttribute("src", `${M.cfg.wwwroot}/lib/editor/atto/plugins/recitmathlive/react/build/mathjax.js`);
-            head.appendChild(el);
             this.loadMathJax();
         }
-        else{
-            console.log("Preloading MathJax...")
-            window.setTimeout(this.preLoadMathJax, 500);
+        else if(counter <= 7){ 
+            console.log(`Preloading MathJax ${counter}...`);
+            window.setTimeout(() => this.preLoadMathJax(++counter), 500);
         }
-        
+        else{
+            alert(`RÉCIT MathLive: Failed to preload MathJax.`);
+            this.props.attoInterface.onClose();
+        }  
     }
 
-    loadMathJax(){
+    loadMathJax(counter){
+        counter = counter || 0;
         let iFrame = this.iFrameRef.current
         let subWindow = iFrame.contentWindow || iFrame.contentDocument;
 
@@ -490,9 +495,13 @@ export class MainView extends Component {
             this.myMathJax = subWindow.MathJax;
             this.setState({mathJaxReady: true}, this.onComponentReady);
         }
+        else if(counter <= 7){ 
+            console.log(`Loading MathJax ${counter}...`);
+            window.setTimeout(() => this.loadMathJax(++counter), 1000);
+        }
         else{
-            console.log("Loading MathJax...")
-            window.setTimeout(this.loadMathJax, 1000);
+            alert(`RÉCIT MathLive: Failed to load MathJax.`);
+            this.props.attoInterface.onClose();
         }  
     } 
 
@@ -549,7 +558,7 @@ export class MainView extends Component {
                     <Button variant='success' onClick={this.onApply}>Appliquer</Button>
                 </ButtonGroup>
                 
-                <iframe style={{display: "none"}} ref={this.iFrameRef}></iframe>
+                <iframe style={{display: "none"}} ref={this.iFrameRef} src={`${M.cfg.wwwroot}/lib/editor/atto/plugins/recitmathlive/react/build/mathjax/index.html`}></iframe>
 
                 {!this.state.componentReady &&
                     <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 9999, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
@@ -578,6 +587,8 @@ export class MainView extends Component {
 
             this.setState({data:data});
         } 
+
+        window.mathVirtualKeyboard.show();  
     }
 
     onDataChange(event, index){
@@ -630,9 +641,9 @@ export class MainView extends Component {
         }
 
         formula += tmp.join(newLine+newLine);
-        formula += "\\end{aligned}";
+        formula += "\\end{aligned}"; 
         formula += "\\end{equation}";
-
+ 
         let p = this.myMathJax.tex2mmlPromise(formula);
         pList.push(p);
  

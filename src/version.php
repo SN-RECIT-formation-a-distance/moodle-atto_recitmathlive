@@ -28,5 +28,5 @@ $plugin->version = 2023082900;
 $plugin->requires = 2022041200; // Moodle 4.0.1+ 
 $plugin->component = 'atto_recitmathlive';
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release = 'v1.0.0-alpha';
+$plugin->release = 'v1.0.1-alpha';
 $plugin->supported = [400, 410];
