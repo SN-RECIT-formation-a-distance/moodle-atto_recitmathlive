@@ -39,48 +39,48 @@ export class MainView extends Component {
                 layer: "Tab",
                 styles: "",
                 rows: [
-                    [{ class: "", latex: "\\ce{H}", },
+                    [{ class: "", latex: "H", },
                     { class: "separator w10" },
                     { class: "separator w10" },
+                    { class: "", latex: '→', insert: "\\rightarrow" },
+                    { class: "", latex: "←", insert: "\\leftarrow" },
+                    { class: "", latex: "↔", isnert: "\\leftrightarrow" },
                     { class: "separator w10" },
                     { class: "separator w10" },
-                    { class: "separator w10" },
-                    { class: "separator w10" },
-                    { class: "separator w10" },
-                    { latex: "\\ce{He}" },
+                    { latex: "He" },
 
                     ],
-                    [{ latex: "\\ce{Li}" },
-                    { latex: "\\ce{Be}" },
+                    [{ latex: "Li" },
+                    { latex: "Be" },
                     { class: "separator w10" },
-                    { latex: "\\ce{B}" },
-                    { latex: "\\ce{C}" },
-                    { latex: "\\ce{N}" },
-                    { latex: "\\ce{O}" },
-                    { latex: "\\ce{F}" },
-                    { latex: "\\ce{Ne}" },
+                    { latex: "B" },
+                    { latex: "C" },
+                    { latex: "N" },
+                    { latex: "O" },
+                    { latex: "F" },
+                    { latex: "Ne" },
 
                     ],
-                    [{ latex: "\\ce{Na}" },
-                    { latex: "\\ce{Mg}" },
+                    [{ latex: "Na" },
+                    { latex: "Mg" },
                     { class: "separator w10" },
-                    { latex: "\\ce{Al}" },
-                    { latex: "\\ce{Si}" },
-                    { latex: "\\ce{P}" },
-                    { latex: "\\ce{S}" },
-                    { latex: "\\ce{Cl}" },
-                    { latex: "\\ce{Ar}" },
+                    { latex: "Al" },
+                    { latex: "Si" },
+                    { latex: "P" },
+                    { latex: "S" },
+                    { latex: "Cl" },
+                    { latex: "Ar" },
 
                     ],
-                    [{ latex: "\\ce{K}" },
-                    { latex: "\\ce{Ca}" },
+                    [{ latex: "K" },
+                    { latex: "Ca" },
                     { class: "separator w10" },
-                    { latex: "\\ce{Ga}" },
-                    { latex: "\\ce{Ge}" },
-                    { latex: "\\ce{As}" },
-                    { latex: "\\ce{Se}" },
-                    { latex: "\\ce{Cl}" },
-                    { latex: "\\ce{Kr" },
+                    { latex: "Ga" },
+                    { latex: "Ge" },
+                    { latex: "As" },
+                    { latex: "Se" },
+                    { latex: "Cl" },
+                    { latex: "Kr" },
 
                     ],
                 ]
@@ -92,14 +92,13 @@ export class MainView extends Component {
                 rows: [
                     [
                         {
-                            class: "tex", latex: "x", aside: "Variables usuelles",
+                            class: "tex w20", latex: "x", aside: "Variables usuelles",
                             variants: [
                                 { class: "tex", latex: "C", aside: "concentration" },
                                 { class: "tex", latex: "m", aside: "masse" },
                                 { class: "tex", latex: "M", aside: "masse molaire" },
                                 { class: "tex", latex: "n", aside: "nombre de particules" },
                                 { class: "tex", latex: "V", aside: "volume" },
-
                                 { class: "tex", latex: "T", aside: "température" },
                                 { class: "tex", latex: "\\Delta{T}", aside: "variation de tempéature..." },
                                 { class: "tex", latex: "t", aside: "temps" },
@@ -116,7 +115,7 @@ export class MainView extends Component {
                         },
 
 
-                        { latex: '\\ce{H2O}', insert: '\\\(\\ce{H2O}\\\)' },
+                        { latex: 'H2O'},
                     ],
                     [{
                         class: "tex", latex: "m/s^2", aside: "Unités",
@@ -414,7 +413,8 @@ export class MainView extends Component {
             options: {
                 display: 'block',
                 addSpace: '0',
-                addBorder: '0'
+                addBorder: '0',
+                chemicalEquation: '0'
             },
             mathLiveReady: false, 
             mathJaxReady: false, 
@@ -516,22 +516,23 @@ export class MainView extends Component {
             <div>
                 <div style={{minWidth:320}}>
                     {this.state.data.map((item, index) =>
-                        <div key={index} className='mb-3 d-flex'>
-                            {this.state.iEditingItem === index ?
-                                <math-field ref={this.mathliveRef} style={{width: "100%"}} onInput={(event) => this.onDataChange(event, index)}> 
-                                    {item.latex}
-                                </math-field>
-                                :
-                                <div className='w-100' style={{fontSize: '1rem'}} dangerouslySetInnerHTML={{__html: this.myMathJax.tex2mml(item.latex)}} />
-                            }
+                        <div key={index} className='mb-3'>
+                            <div className='mb-1 d-flex'>
+                                {this.state.iEditingItem === index ?
+                                    <math-field ref={this.mathliveRef} style={{width: "100%"}} onInput={(event) => this.onDataChange(event, index)}></math-field>
+                                    :
+                                    <div className='w-100' style={{fontSize: '1rem'}} dangerouslySetInnerHTML={{__html: this.myMathJax.tex2mml(item.latex)}} ></div>
+                                }
 
-                            <ButtonGroup className='ml-3'>
-                                <Button size="sm" disabled={index === this.state.iEditingItem} onClick={() => this.onEdit(index)}><FontAwesomeIcon icon={faPencilAlt} title="Modifier"/></Button>
-                                <Button size="sm" disabled={index === 0} onClick={() => this.onShift(index, index-1)}><FontAwesomeIcon icon={faArrowUp} title="Monter"/></Button>
-                                <Button size="sm" disabled={index === this.state.data.length - 1} onClick={() => this.onShift(index, index+1)}><FontAwesomeIcon icon={faArrowDown} title="Descendre"/></Button>
-                                <Button size="sm" disabled={index === 0} onClick={() => this.onDelete(index)}><FontAwesomeIcon icon={faTrashAlt} title="Supprimer"/></Button> 
-                            </ButtonGroup>
-                            
+                                <ButtonGroup className='ml-3'>
+                                    <Button size="sm" disabled={index === this.state.iEditingItem} onClick={() => this.onEdit(index)}><FontAwesomeIcon icon={faPencilAlt} title="Modifier"/></Button>
+                                    <Button size="sm" disabled={index === 0} onClick={() => this.onShift(index, index-1)}><FontAwesomeIcon icon={faArrowUp} title="Monter"/></Button>
+                                    <Button size="sm" disabled={index === this.state.data.length - 1} onClick={() => this.onShift(index, index+1)}><FontAwesomeIcon icon={faArrowDown} title="Descendre"/></Button>
+                                    <Button size="sm" disabled={index === 0} onClick={() => this.onDelete(index)}><FontAwesomeIcon icon={faTrashAlt} title="Supprimer"/></Button> 
+                                </ButtonGroup>
+                                
+                            </div>
+                            <div className='text-muted' dangerouslySetInnerHTML={{__html: item.latex}}></div>
                         </div>
                     )}
                     <Button size="sm" onClick={this.onAdd}><FontAwesomeIcon icon={faPlus} title="Ajouter"/>{" Ajouter une autre ligne"}</Button>
@@ -561,6 +562,14 @@ export class MainView extends Component {
                     <Form.Label column sm="4">Ajouter bordure</Form.Label>
                     <Col sm="8"> 
                         <ToggleButtons name='addBorder' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addBorder]} type='radio' onChange={this.onOptionChange}/>
+                    </Col>
+                    <Form.Text></Form.Text>
+                </Form.Group>
+
+                <Form.Group as={Row} controlId="formOptions4">
+                    <Form.Label column sm="4">Équation chimique</Form.Label>
+                    <Col sm="8"> 
+                        <ToggleButtons name='chemicalEquation' options={this.state.dropdownLists.yesNoList} value={[this.state.options.chemicalEquation]} type='radio' onChange={this.onOptionChange}/>
                     </Col>
                     <Form.Text></Form.Text>
                 </Form.Group>
@@ -596,7 +605,8 @@ export class MainView extends Component {
             options.addBorder = (doc.firstChild.classList.contains('border') ? '1' : '0');
 
             content = Mathml2latex.convert(content); 
-            content = content.replace(/\\\\\s\\\\/g,'\\\\'); 
+            content = content.replace(/\s\\/g, '\\'); // remove empty spaces before \ like "H \rightarrow"
+            content = content.replace(/\\\\\s\\\\/g,'\\\\'); // remove empty spaces between lines
             content = content.split('\\\\'); 
 
             for(let item of content){
@@ -614,6 +624,7 @@ export class MainView extends Component {
     onDataChange(event, index){
         let data = this.state.data;
         data[index].latex = event.target.value;
+        this.mathliveRef.current.setValue(data[index].latex, {suppressChangeNotifications: true});
         this.setState({data: data});
     }
 
@@ -626,6 +637,7 @@ export class MainView extends Component {
     onEdit(index){
         this.setState({iEditingItem: index}, () => { 
             this.mathliveRef.current.focus(); 
+            this.mathliveRef.current.setValue(this.state.data[index].latex, {suppressChangeNotifications: true});
         });
     }
 
@@ -682,10 +694,20 @@ export class MainView extends Component {
             tmp.push(item.latex);
         }
 
-        formula += tmp.join(newLine+newLine);
+        tmp = tmp.join(newLine+newLine); 
+
+        if(this.state.options.chemicalEquation === '1'){ 
+            formula += `\\ce{${tmp}}`; 
+        }
+        else{
+            formula += tmp; 
+        }
+        
         formula += "\\end{aligned}"; 
         formula += "\\end{equation}";
  
+        console.log(formula);
+
         let p = this.myMathJax.tex2mmlPromise(formula);
         pList.push(p);
  
@@ -699,7 +721,7 @@ export class MainView extends Component {
                 doc.firstChild.classList.add("border", "border-secondary", "rounded", "m-auto", "p-2", "d-flex");
                 doc.firstChild.style.width = 'fit-content';
             }
-            else if(this.state.options.addBorder === '1'){
+            else if(this.state.options.addBorder === '1'){ 
                 doc.firstChild.classList.add("border", "border-secondary", "rounded", "p-2");
             }
 
@@ -709,13 +731,11 @@ export class MainView extends Component {
                 result =  "<p>&nbsp;</p>" + result +  "<p>&nbsp;</p>";
             }
 
-            this.props.attoInterface.onApply(result);
+            this.props.attoInterface.onApply(result); 
         },
         (v) => {
             console.log(v);
             throw new Error(v);
         });
-
-        
     }
 }

@@ -1,58 +1,37 @@
 <!DOCTYPE html>
 <html>
     <head>
-      <!--
-        EXEMPLE WITH MATHJAX 2.7  
       <script>
-        // https://docs.mathjax.org/en/v2.7-latest/advanced/toMathML.html
-        function toMathML(jax,callback) {
-          var mml;
-          try {
-            mml = jax.root.toMathML("");
-          } catch(err) {
-            if (!err.restart) {throw err} // an actual error
-            return MathJax.Callback.After([toMathML,jax,callback],err.restart);
-          }
-          MathJax.Callback(callback)(mml);
-        }
-
+        window.MathJax = {
+          tex: {
+            // inlineMath: [['$', '$'], ['\\(', '\\)']],
+            packages: {'[+]': ['mhchem']}
+          },
+          loader: {load: ['[tex]/mhchem']},
+        };
       </script>
-      
-      <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-              extensions: ["toMathML.js"],
-              //tex2jax: {inlineMath: [​["$","$"],["\\\\​(","\\\\​)"]​]}
-            });
-
-            MathJax.Hub.Queue(
-              function () {
-                var jax = MathJax.Hub.getAllJax(document.body);
-                console.log(jax, document.body.children[1])
-                  toMathML(document.body.children[1],function (mml) {
-                    alert(document.body.innerText + "\n\n=>\n\n"+ mml);
-                  });
-              }
-            );
-        </script> 
-        <script type="text/javascript" src="./mathjax-2.7.9.js"></script>
-        <script type="text/javascript" src="./extensions/toMathML.js"></script>
-        <script type="text/javascript" src="./extensions/MathMenu.js"></script>
-        <script type="text/javascript" src="./extensions/MathZoom.js"></script>
-        <script type="text/javascript" src="./extensions/mhchem.js"></script>
-      -->
-
-      <!--<script type="text/javascript">
-           window.MathJax = {
-             tex: {
-               // inlineMath: [['$', '$'], ['\\(', '\\)']],
-               packages: {'[+]': ['mhchem']}
-             },
-             loader: {load: ['input/tex', 'output/chtml', '[tex]/mhchem']},
-           };
-      </script> -->
-      <script type="text/javascript" src="./mathjax-3.2.2.js"></script>
-
+      <script id="MathJax-script"  src="./mathjax-3.2.2.js"></script>
+      <!--<script id="MathJax-script" async  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>-->
     </head> 
 <body>      
+  <!--\(\ce{2H + O -> H2O}\)
+  
+
+  <p></p>
+  \(\ce{H2O}\)
+  <p></p>
+  \begin{aligned}
+  \(\ce{H2O}\)
+  \end{aligned}
+
+  <p></p>
+  \begin{align}
+  \ce{RNO2 &<=>[+e] RNO2^{-.} \\
+  RNO2^{-.} &<=>[+e] RNO2^2-}
+  \end{align}
+
+  <p></p>
+  \begin{equation}\begin{aligned}\int_0^{\infty}\frac{6}{9}+5^2\end{aligned}\end{equation}-->
+  <!--\begin{equation}\begin{aligned}\(\ce{H2O}\)\end{aligned}\end{equation}  -->
 </body>
 </html>
