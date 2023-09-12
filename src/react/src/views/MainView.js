@@ -514,6 +514,12 @@ export class MainView extends Component {
 
         let main = 
             <div>
+                
+                <ButtonGroup className='d-flex mb-2'>
+                    <Button onClick={() => this.onOptionChange({target: {name:'chemicalEquation', value:'0'}})} variant={(this.state.options.chemicalEquation === '0') ? "primary" : "secondary"} size="lg" >Équation math</Button>
+                    <Button onClick={() => this.onOptionChange({target: {name:'chemicalEquation', value:'1'}})}variant={(this.state.options.chemicalEquation === '1') ? "primary" : "secondary"} size="lg" >Équation chimique</Button>
+                </ButtonGroup>
+
                 <div style={{minWidth:320}}>
                     {this.state.data.map((item, index) =>
                         <div key={index} className='mb-3'>
@@ -538,7 +544,7 @@ export class MainView extends Component {
                     <Button size="sm" onClick={this.onAdd}><FontAwesomeIcon icon={faPlus} title="Ajouter"/>{" Ajouter une autre ligne"}</Button>
                 </div>
 
-                <div className='mt-2 mb-2' ref={this.mathlivePlaceholder} style={{height: 340}}></div>
+                <div className='mt-2 mb-2' ref={this.mathlivePlaceholder} style={{height: this.getMathLiveKeyboardHeight()}}></div>
 
                 <hr/>
 
@@ -564,19 +570,11 @@ export class MainView extends Component {
                         <ToggleButtons name='addBorder' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addBorder]} type='radio' onChange={this.onOptionChange}/>
                     </Col>
                     <Form.Text></Form.Text>
-                </Form.Group>
-
-                <Form.Group as={Row} controlId="formOptions4">
-                    <Form.Label column sm="4">Équation chimique</Form.Label>
-                    <Col sm="8"> 
-                        <ToggleButtons name='chemicalEquation' options={this.state.dropdownLists.yesNoList} value={[this.state.options.chemicalEquation]} type='radio' onChange={this.onOptionChange}/>
-                    </Col>
-                    <Form.Text></Form.Text>
-                </Form.Group>
+                </Form.Group>             
 
                 <hr/>
 
-                <ButtonGroup className='float-right mt-3'>
+                <ButtonGroup style={{display: 'grid', gridTemplateColumns: 'auto auto', justifyContent: 'flex-end'}}>
                     <Button variant='secondary' onClick={this.onCancel}>Annuler</Button> 
                     <Button variant='success' onClick={this.onApply}>Appliquer</Button>
                 </ButtonGroup>
@@ -593,6 +591,18 @@ export class MainView extends Component {
         return (main);
     }
 
+    getMathLiveKeyboardHeight(){
+        if(window.innerWidth >= 1200){
+            return 340;
+        }
+        else if((window.innerWidth < 1200) && (window.innerWidth >= 992)){
+            return 275;
+        }
+        else{
+            return 250;
+        }
+    }
+
     setInitialValue(){
         let data = [];
         let content  = this.props.attoInterface.getContent();
@@ -605,9 +615,9 @@ export class MainView extends Component {
             options.addBorder = (doc.firstChild.classList.contains('border') ? '1' : '0');
 
             content = Mathml2latex.convert(content); 
-            content = content.replace(/\s\\/g, '\\'); // remove empty spaces before \ like "H \rightarrow"
+           // content = content.replace(/\s\\/g, '\\'); // remove empty spaces before \ like "H \rightarrow"
             content = content.replace(/\\\\\s\\\\/g,'\\\\'); // remove empty spaces between lines
-            content = content.split('\\\\'); 
+            content = content.split('\\\\');  
 
             for(let item of content){
                 data.push({latex: item})
@@ -675,7 +685,10 @@ export class MainView extends Component {
         if(window.confirm("Confirmez-vous la suppression?")){
             let data = this.state.data;
             data.splice(index, 1); 
-            this.setState({data: data, iEditingItem: data.length - 1});
+            this.setState({data: data, iEditingItem: (index === this.state.iEditingItem ? 0 : this.state.iEditingItem)}, () => {
+                this.mathliveRef.current.focus(); 
+                this.mathliveRef.current.setValue(this.state.data[this.state.iEditingItem].latex, {suppressChangeNotifications: true});
+            });
         }
     }
 

@@ -137,11 +137,10 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         modal.classList.add('modal', 'fade');
         modal.setAttribute('style', 'overflow-y: hidden;');
         let inner2 = document.createElement('div');
-        inner2.classList.add('modal-dialog');
+        inner2.classList.add('modal-dialog', 'modal-xl');
         modal.appendChild(inner2);
         let inner = document.createElement('div');
         inner.classList.add('modal-content');
-        inner.setAttribute('style', 'width: 850px;');
         inner2.appendChild(inner);
 
         let header = document.createElement('div');
@@ -156,6 +155,8 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         
         let body = document.createElement('div');
         body.classList.add('modal-body');
+        body.style.overflowY = 'auto';
+        body.style.maxHeight = `${window.innerHeight - 110}px`;
         inner.appendChild(body);
         body.appendChild(content);
         
