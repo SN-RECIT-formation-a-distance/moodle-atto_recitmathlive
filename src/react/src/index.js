@@ -22,6 +22,7 @@ import React, { Component } from 'react';
 import { createRoot } from 'react-dom/client';
 import {MainView} from "./views/MainView";
 import { Options } from './common/Options';
+ import "./common/style.scss";
  
 class App extends Component {
     static defaultProps = {

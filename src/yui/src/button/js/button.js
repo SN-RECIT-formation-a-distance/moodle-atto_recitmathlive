@@ -67,11 +67,18 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
 
         var url = M.cfg.wwwroot;
         var js = url +"/lib/editor/atto/plugins/recitmathlive/react/build/index.js";
+        var css = url +"/lib/editor/atto/plugins/recitmathlive/react/build/index.css";
+
         var script = document.createElement('script');
         script.onload = this.onLoadUI.bind(this);
         script.setAttribute('src', js);
         script.setAttribute('id', id);
         script.setAttribute('type', 'text/javascript');
+        document.getElementsByTagName('head')[0].appendChild(script);
+
+        script = document.createElement('link');
+        script.setAttribute('href', css);
+        script.setAttribute('rel', 'stylesheet');
         document.getElementsByTagName('head')[0].appendChild(script);
     },
 
@@ -153,8 +160,6 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         
         let body = document.createElement('div');
         body.classList.add('modal-body');
-        body.style.overflowY = 'auto';
-        body.style.maxHeight = `${window.innerHeight - 110}px`;
         inner.appendChild(body);
         body.appendChild(content);
         

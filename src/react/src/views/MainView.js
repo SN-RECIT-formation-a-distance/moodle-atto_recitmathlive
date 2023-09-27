@@ -20,7 +20,7 @@
  */
 import React, { Component  } from 'react';
 import "../libs/mathlive/mathlive";
-import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tooltip} from 'react-bootstrap';
+import { Button, ButtonGroup, Col, Form, OverlayTrigger, Row, Tab, Tabs, Tooltip} from 'react-bootstrap';
 import {faArrowDown, faArrowUp, faInfo, faInfoCircle, faPencilAlt, faPlus, faSpinner, faTrashAlt  } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Mathml2latex from'mathml-to-latex';
@@ -42,16 +42,16 @@ export class MainView extends Component {
                     [{ class: "", latex: "H", },
                     { class: "separator w10" },
                     { class: "separator w10" },
-                    { class: "", latex: '→', insert: "\\rightarrow" },
-                    { class: "", latex: "←", insert: "\\leftarrow" },
-                    { class: "", latex: "↔", isnert: "\\leftrightarrow" },
+                    { class: "separator w10" },
+                    { class: "separator w10" },
+                    { class: "separator w10" },                    
                     { class: "separator w10" },
                     { class: "separator w10" },
                     { latex: "He" },
 
                     ],
                     [{ latex: "Li" },
-                    { latex: "Be" },
+                    { latex: "Be", insert: "\\text{Be}" },
                     { class: "separator w10" },
                     { latex: "B" },
                     { latex: "C" },
@@ -72,7 +72,7 @@ export class MainView extends Component {
                     { latex: "Ar" },
 
                     ],
-                    [{ latex: "K" },
+                  /*  [{ latex: "K" },
                     { latex: "Ca" },
                     { class: "separator w10" },
                     { latex: "Ga" },
@@ -81,8 +81,21 @@ export class MainView extends Component {
                     { latex: "Se" },
                     { latex: "Cl" },
                     { latex: "Kr" },
-
+                    ],*/
+                    [
+                    { class: "separator w10" },
+                    { class: "", latex: '→', insert: "\\to" },
+                    { class: "", latex: "←", insert: "\\gets" },
+                    { class: "", latex: "↔", insert: "\\biconditional" },
+                    { latex: "\\underrightarrow{#@}" },
+                    { latex: "{#@}←" },
+                    { latex: "{#@}↔" },
+                    { latex: "{#@}_{#@}"},
+                    { class: "{#@}^{#@}" },
+                    { latex: 'H_2O'},
+                    { class: "separator w10" }, 
                     ],
+                    
                 ]
             },
             {
@@ -408,13 +421,14 @@ export class MainView extends Component {
         this.loadMathLive = this.loadMathLive.bind(this);
 
         this.state = {
+            selectedTab: '0',
             data: [{latex: ""}], 
             iEditingItem: 0,
             options: {
                 display: 'block',
                 addSpace: '0',
                 addBorder: '0',
-                chemicalEquation: '0'
+               // chemicalEquation: '0'
             },
             mathLiveReady: false, 
             mathJaxReady: false, 
@@ -507,70 +521,68 @@ export class MainView extends Component {
         }  
     } 
 
-    render() {      
-        if(window.mathVirtualKeyboard && !window.mathVirtualKeyboard.visible){
-            window.mathVirtualKeyboard.show();  
+    componentDidUpdate(prevProps, prevState){
+        if(prevState.iEditingItem !== this.state.iEditingItem){
+            this.mathliveRef.current.parentNode.parentNode.insertAdjacentElement('afterend', this.mathlivePlaceholder.current);
         }
+    }
+
+    render() {      
+        /*if(window.mathVirtualKeyboard && !window.mathVirtualKeyboard.visible){
+            window.mathVirtualKeyboard.show();  
+        }*/
 
         let main = 
             <div>
-                
-                <ButtonGroup className='d-flex mb-2'>
-                    <Button onClick={() => this.onOptionChange({target: {name:'chemicalEquation', value:'0'}})} variant={(this.state.options.chemicalEquation === '0') ? "primary" : "secondary"} size="lg" >Équation math</Button>
-                    <Button onClick={() => this.onOptionChange({target: {name:'chemicalEquation', value:'1'}})}variant={(this.state.options.chemicalEquation === '1') ? "primary" : "secondary"} size="lg" >Équation chimique</Button>
-                </ButtonGroup>
+                <Tabs activeKey={this.state.selectedTab} onSelect={(t) => this.setState({selectedTab: t})}>
+                    <Tab eventKey="0" title="Équation(s)" className='p-2' style={{overflowY: 'auto', maxHeight: '65vh'}}>
+                        <div>
+                            {this.state.data.map((item, index) =>
+                                <div key={index} className='mb-3'>
+                                    <div className='mb-1 d-flex'>
+                                        {this.state.iEditingItem === index ?
+                                                <math-field ref={this.mathliveRef} style={{width: "100%"}} onInput={(event) => this.onDataChange(event, index)}></math-field>
+                                            :
+                                                <div className='w-100' style={{fontSize: '1rem'}} dangerouslySetInnerHTML={{__html: this.myMathJax.tex2mml(item.latex)}} ></div>
+                                        }
 
-                <div style={{minWidth:320}}>
-                    {this.state.data.map((item, index) =>
-                        <div key={index} className='mb-3'>
-                            <div className='mb-1 d-flex'>
-                                {this.state.iEditingItem === index ?
-                                    <math-field ref={this.mathliveRef} style={{width: "100%"}} onInput={(event) => this.onDataChange(event, index)}></math-field>
-                                    :
-                                    <div className='w-100' style={{fontSize: '1rem'}} dangerouslySetInnerHTML={{__html: this.myMathJax.tex2mml(item.latex)}} ></div>
-                                }
-
-                                <ButtonGroup className='ml-3'>
-                                    <Button size="sm" disabled={index === this.state.iEditingItem} onClick={() => this.onEdit(index)}><FontAwesomeIcon icon={faPencilAlt} title="Modifier"/></Button>
-                                    <Button size="sm" disabled={index === 0} onClick={() => this.onShift(index, index-1)}><FontAwesomeIcon icon={faArrowUp} title="Monter"/></Button>
-                                    <Button size="sm" disabled={index === this.state.data.length - 1} onClick={() => this.onShift(index, index+1)}><FontAwesomeIcon icon={faArrowDown} title="Descendre"/></Button>
-                                    <Button size="sm" disabled={index === 0} onClick={() => this.onDelete(index)}><FontAwesomeIcon icon={faTrashAlt} title="Supprimer"/></Button> 
-                                </ButtonGroup>
-                                
-                            </div>
-                            <div className='text-muted' dangerouslySetInnerHTML={{__html: item.latex}}></div>
+                                        <ButtonGroup className='ml-3'>
+                                            <Button size="sm" disabled={index === this.state.iEditingItem} onClick={() => this.onEdit(index)}><FontAwesomeIcon icon={faPencilAlt} title="Modifier"/></Button>
+                                            <Button size="sm" onClick={() => this.onAdd(index)}><FontAwesomeIcon icon={faPlus} title="Ajouter une autre ligne"/></Button>
+                                            <Button size="sm" disabled={index === 0} onClick={() => this.onShift(index, index-1)}><FontAwesomeIcon icon={faArrowUp} title="Monter"/></Button>
+                                            <Button size="sm" disabled={index === this.state.data.length - 1} onClick={() => this.onShift(index, index+1)}><FontAwesomeIcon icon={faArrowDown} title="Descendre"/></Button>
+                                            <Button size="sm" disabled={index === 0} onClick={() => this.onDelete(index)}><FontAwesomeIcon icon={faTrashAlt} title="Supprimer"/></Button> 
+                                        </ButtonGroup>
+                                    </div>
+                                </div>
+                            )}                            
                         </div>
-                    )}
-                    <Button size="sm" onClick={this.onAdd}><FontAwesomeIcon icon={faPlus} title="Ajouter"/>{" Ajouter une autre ligne"}</Button>
-                </div>
+                        <div className='mt-2 mb-2' ref={this.mathlivePlaceholder} style={{height: this.getMathLiveKeyboardHeight()}}></div>
+                    </Tab>
+                    <Tab eventKey="1" title="Options" className='p-2'>
+                        <Form.Group as={Row} controlId="formOptions1">
+                            <Form.Label column sm="4">Type d'affichage</Form.Label>
+                            <Col sm="8">
+                                <ToggleButtons name='display' options={this.state.dropdownLists.displayList} value={[this.state.options.display]} type='radio' onChange={this.onOptionChange}/>
+                            </Col>
+                        </Form.Group>
 
-                <div className='mt-2 mb-2' ref={this.mathlivePlaceholder} style={{height: this.getMathLiveKeyboardHeight()}}></div>
+                        <Form.Group as={Row} controlId="formOptions2">
+                            <Form.Label column sm="4">Ajouter espacement</Form.Label>
+                            <Col sm="8" className='d-flex align-items-center'> 
+                                <ToggleButtons name='addSpace' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addSpace]} type='radio' onChange={this.onOptionChange}/>
+                                <OverlayTrigger overlay={<Tooltip>{"L'espacement ajoute un saut de paragraphe avant et après la formule afin de pouvoir faciliter l'ajout des autres contenus."}</Tooltip>}><Button size='sm' className='ml-2 rounded-circle'><FontAwesomeIcon icon={faInfoCircle}/> </Button></OverlayTrigger>
+                            </Col>
+                        </Form.Group>
 
-                <hr/>
-
-                <Form.Group as={Row} controlId="formOptions1">
-                    <Form.Label column sm="4">Type d'affichage</Form.Label>
-                    <Col sm="8">
-                        <ToggleButtons name='display' options={this.state.dropdownLists.displayList} value={[this.state.options.display]} type='radio' onChange={this.onOptionChange}/>
-                    </Col>
-                </Form.Group>
-
-                <Form.Group as={Row} controlId="formOptions2">
-                    <Form.Label column sm="4">Ajouter espacement</Form.Label>
-                    <Col sm="8" className='d-flex align-items-center'> 
-                        <ToggleButtons name='addSpace' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addSpace]} type='radio' onChange={this.onOptionChange}/>
-                        <OverlayTrigger overlay={<Tooltip>{"L'espacement ajoute un saut de paragraphe avant et après la formule afin de pouvoir faciliter l'ajout des autres contenus."}</Tooltip>}><Button size='sm' className='ml-2 rounded-circle'><FontAwesomeIcon icon={faInfoCircle}/> </Button></OverlayTrigger>
-                    </Col>
-                    <Form.Text></Form.Text>
-                </Form.Group>
-
-                <Form.Group as={Row} controlId="formOptions3">
-                    <Form.Label column sm="4">Ajouter bordure</Form.Label>
-                    <Col sm="8"> 
-                        <ToggleButtons name='addBorder' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addBorder]} type='radio' onChange={this.onOptionChange}/>
-                    </Col>
-                    <Form.Text></Form.Text>
-                </Form.Group>             
+                        <Form.Group as={Row} controlId="formOptions3">
+                            <Form.Label column sm="4">Ajouter bordure</Form.Label>
+                            <Col sm="8"> 
+                                <ToggleButtons name='addBorder' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addBorder]} type='radio' onChange={this.onOptionChange}/>
+                            </Col>
+                        </Form.Group>  
+                    </Tab>
+                </Tabs>
 
                 <hr/>
 
@@ -604,7 +616,7 @@ export class MainView extends Component {
     }
 
     setInitialValue(){
-        let data = [];
+        let data = this.state.data;
         let content  = this.props.attoInterface.getContent();
         let options = this.state.options;
 
@@ -613,8 +625,10 @@ export class MainView extends Component {
             
             options.display = doc.firstChild.getAttribute('display');
             options.addBorder = (doc.firstChild.classList.contains('border') ? '1' : '0');
+            options.addSpace = '0';
 
             content = Mathml2latex.convert(content); 
+            console.log("Mathml2latex", content)
            // content = content.replace(/\s\\/g, '\\'); // remove empty spaces before \ like "H \rightarrow"
             content = content.replace(/\\\\\s\\\\/g,'\\\\'); // remove empty spaces between lines
             content = content.split('\\\\');  
@@ -624,9 +638,13 @@ export class MainView extends Component {
             }
 
             this.mathliveRef.current.setValue(data[0].latex, {suppressChangeNotifications: true});
+        }
+        else{ 
+            options.addSpace = '1';
+        }
 
-            this.setState({data:data, options: options});
-        } 
+        
+        this.setState({data:data, options: options});
 
         window.mathVirtualKeyboard.show();  
     }
@@ -673,10 +691,10 @@ export class MainView extends Component {
         this.setState({data: data});
     }
 
-    onAdd(){
-        let data = this.state.data;
-        data.push({latex: ""});
-        this.setState({data: data, iEditingItem: data.length - 1}, () => { 
+    onAdd(index){
+        let data = [...this.state.data];
+        data.splice(index+1, 0, {latex: ""});
+        this.setState({data: data, iEditingItem: index + 1}, () => { 
             this.mathliveRef.current.focus(); 
         });
     }
@@ -709,13 +727,15 @@ export class MainView extends Component {
 
         tmp = tmp.join(newLine+newLine); 
 
-        if(this.state.options.chemicalEquation === '1'){ 
+       /* if(this.state.options.chemicalEquation === '1'){ 
             formula += `\\ce{${tmp}}`; 
         }
         else{
             formula += tmp; 
-        }
-        
+        }*/
+        formula += tmp; 
+
+       
         formula += "\\end{aligned}"; 
         formula += "\\end{equation}";
  
