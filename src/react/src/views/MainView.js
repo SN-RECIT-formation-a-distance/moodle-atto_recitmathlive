@@ -541,7 +541,7 @@ export class MainView extends Component {
                                 <div key={index} className='mb-3'>
                                     <div className='mb-1 d-flex'>
                                         {this.state.iEditingItem === index ?
-                                                <math-field ref={this.mathliveRef} style={{width: "100%"}} onInput={(event) => this.onDataChange(event, index)}></math-field>
+                                                <math-field ref={this.mathliveRef} style={{width: "100%"}} onInput={(event) => this.onDataChange(event, index)}>{item.latex}</math-field>
                                             :
                                                 <div className='w-100' style={{fontSize: '1rem'}} dangerouslySetInnerHTML={{__html: this.myMathJax.tex2mml(item.latex)}} ></div>
                                         }
@@ -633,6 +633,7 @@ export class MainView extends Component {
             content = content.replace(/\\\\\s\\\\/g,'\\\\'); // remove empty spaces between lines
             content = content.split('\\\\');  
 
+            data = [];
             for(let item of content){
                 data.push({latex: item})
             }
@@ -642,7 +643,6 @@ export class MainView extends Component {
         else{ 
             options.addSpace = '1';
         }
-
         
         this.setState({data:data, options: options});
 
@@ -652,7 +652,8 @@ export class MainView extends Component {
     onDataChange(event, index){
         let data = this.state.data;
         data[index].latex = event.target.value;
-        this.mathliveRef.current.setValue(data[index].latex, {suppressChangeNotifications: true});
+        // calling setValue onDataChange causes Mathlive to lose the cursor when entering the expression
+       // this.mathliveRef.current.setValue(data[index].latex, {suppressChangeNotifications: true});
         this.setState({data: data});
     }
 

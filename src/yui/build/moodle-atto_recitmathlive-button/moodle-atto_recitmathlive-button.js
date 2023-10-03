@@ -107,6 +107,10 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
             let mathNode = this.getMathMlElement(selectionObj.anchorNode);
             if(mathNode){
                 e.preventDefault();
+
+                this.myAttr.selectedNode = mathNode;
+                this.openModal();
+                
                 return false;
             }
         }
