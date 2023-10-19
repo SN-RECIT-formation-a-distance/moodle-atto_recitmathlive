@@ -31,8 +31,6 @@ export class MainView extends Component {
         layers: [
             "numeric", 
             "symbols", 
-            //"alphabetic", 
-            //"greek",
             {
                 label: "Tableau periodique",
                 tooltip: "Tableau périodique des principaux éléments",
@@ -72,7 +70,7 @@ export class MainView extends Component {
                     { latex: "Ar" },
 
                     ],
-                  /*  [{ latex: "K" },
+                   [{ latex: "K" },
                     { latex: "Ca" },
                     { class: "separator w10" },
                     { latex: "Ga" },
@@ -81,113 +79,105 @@ export class MainView extends Component {
                     { latex: "Se" },
                     { latex: "Cl" },
                     { latex: "Kr" },
-                    ],*/
-                    [
-                    { class: "separator w10" },
-                    { class: "", latex: '→', insert: "\\to" },
-                    { class: "", latex: "←", insert: "\\gets" },
-                    { class: "", latex: "↔", insert: "\\biconditional" },
-                    { latex: "\\underrightarrow{#@}" },
-                    { latex: "{#@}←" },
-                    { latex: "{#@}↔" },
-                    { latex: "{#@}_{#@}"},
-                    { class: "{#@}^{#@}" },
-                    { latex: 'H_2O'},
-                    { class: "separator w10" }, 
                     ],
-                    
                 ]
             },
             {
-                label: "Science usuelle",
-                tooltip: "Notations symboliques usuelles en science et technologie",
+                label: "Chimie",
+                tooltip: "",
                 layer: "chimie",
                 rows: [
                     [
-                        {
-                            class: "tex w20", latex: "x", aside: "Variables usuelles",
-                            variants: [
-                                { class: "tex", latex: "C", aside: "concentration" },
-                                { class: "tex", latex: "m", aside: "masse" },
-                                { class: "tex", latex: "M", aside: "masse molaire" },
-                                { class: "tex", latex: "n", aside: "nombre de particules" },
-                                { class: "tex", latex: "V", aside: "volume" },
-                                { class: "tex", latex: "T", aside: "température" },
-                                { class: "tex", latex: "\\Delta{T}", aside: "variation de tempéature..." },
-                                { class: "tex", latex: "t", aside: "temps" },
-                                { class: "tex", latex: "\\Delta{t}", aside: "variation de temps..." },
-                                { class: "tex", latex: "\\vec{s}", aside: "position" },
-                                { class: "tex", latex: "\\overrightarrow{\\Delta{s}}", aside: "variation de position..." },
-                                { class: "tex", latex: "\\vec{v}", aside: "vitesse" },
-                                { class: "tex", latex: "\\overrightarrow{\\Delta{v}}", aside: "variation de vitesse..." },
-                                { class: "tex", latex: "\\vec{a}", aside: "accélération" },
-                                { class: "tex", latex: "\\overrightarrow{\\Delta{a}}", aside: "variation d'accélération'..." },
-                                { class: "tex", latex: "\\theta_i", aside: "angle d'indidence" },
-                                { class: "tex", latex: "\\theta_r", aside: "angle de réfl/réfra" },
-                            ]
-                        },
-
-
-                        { latex: 'H2O'},
-                    ],
-                    [{
-                        class: "tex", latex: "m/s^2", aside: "Unités",
-                        variants: [
-                            { class: "tex", latex: "^\\circ{C}", aside: "degrés Celcius" },
-                            { class: "tex", latex: "m", aside: "mètres" },
-                            { class: "tex", latex: "m/s", aside: "mètres par seconde " },
-                            { class: "tex", latex: "m/s^2", aside: "mètres par seconde carrée" },
-                            { class: "tex", latex: "s", aside: "secondes" },
-                            { class: "tex", latex: "N", aside: "Newton" },
-                            { class: "tex", latex: "W", aside: "Watt" },
-                            { class: "tex", latex: "J", aside: "Joules" },
-                            { class: "tex", latex: "g", aside: "grammes" },
-                            { class: "tex", latex: "l", aside: "litres" },
-                            { class: "tex", latex: "K", aside: "Kelvin" },
-                            { class: "tex", latex: "mol", aside: "mol" },
-                            { class: "tex", latex: "mol/l", aside: "mol/l" },
-                            { class: "tex", latex: "M", aside: "(molaire) mol par litre" },
-                            { class: "tex", latex: "A", aside: "Ampères" },
-                            { class: "tex", latex: "V", aside: "Volt" },
-                            { class: "tex", latex: "\\Omega", aside: "ohms" },
-
-                        ]
-                    },
-
-
-
+                        { class: "tex", latex: "C", aside: "Concentration" },
+                        { class: "tex", latex: "m", aside: "Masse" },
+                        { class: "tex", latex: "M", aside: "Masse molaire" },
+                        { class: "tex", latex: "n", aside: "Nombre de particule" },
+                        { class: "tex", latex: "V", aside: "Volume" },
+                        { class: "tex", latex: "T", aside: "température" },
+                        { class: "tex", latex: "\\Delta{T}", aside: "variation de tempéature..." },
+                        { class: "tex", latex: "t", aside: "temps" },
+                        { class: "tex", latex: "\\Delta{t}", aside: "variation de temps..." },
                     ],
                     [
-                        {
-                            latex: '\\sqrt{#@}'
-                        },
-                        { latex: '\\pm' },
-                        { latex: '\\overarc{#@}' },
-                        { latex: '\\sim' },
-                        { class: 'w15', latex: '#@_{#?}' },
+                        { class: "tex", latex: "s", aside: "Secondes" },
+                        { class: "tex", latex: "^\\circ{C}", aside: "Degrés Celcius" },
+                        { class: "tex", latex: "g", aside: "grammes" },
+                        { class: "tex", latex: "l", aside: "litres" },
+                        { class: "tex", latex: "K", aside: "Kelvin" },
+                        { class: "tex", latex: "mol", aside: "Mol" },
+                        { class: "tex", latex: "mol/l", aside: "Mol/molaire" },
+                        { class: "tex", latex: "M", aside: "Mol/litre" },
+                        { latex: 'k', aside: 'Constante des gaz parfait', },
                     ],
-                    [{ class: 'separator w20' },
-                    { class: 'separator w20' },
-                    { class: 'separator w20' },
-                    { class: 'separator w15' },
-                    {
-                        class: 'action', label: "<svg><use xlink:href='#svg-arrow-left' /></svg>",
-                        command: ['performWithFeedback', 'moveToPreviousChar'],
-                    },
-                    {
-                        class: 'action', label: "<svg><use xlink:href='#svg-arrow-right' /></svg>",
-                        command: ['performWithFeedback', 'moveToNextChar'],
-                    },
+                    [
+                        { class: "", latex: '→', insert: "\\to" },
+                        { class: "", latex: "←", insert: "\\gets" },
+                        { class: "", latex: "↔", insert: "\\biconditional" },
+                        { latex: '\\pm' },
+                        { latex: '\\sim' },
+                        { class: "separator w10" },
+                        { class: "separator w10" },
+                        { class: "separator w10" },
+                        { latex: 'H_2O'},
+                    ],
+                    [
+                        { latex: "\\vec{#@}" },
+                        { latex: '\\sqrt{#@}'},
+                        { latex: '\\overarc{#@}' },
+                        { latex: '#@_{#?}' },
+                        { latex: "\\underrightarrow{#@}" },
+                        { latex: "{#@}←" },
+                        { latex: "{#@}↔" },
+                        { latex: "{#@}_{#@}"},
+                        { class: "separator w10" },
                     ],
                 ],
             },
             {
-                label: "Symboles usuels",
-                tooltip: "Notations symboliques usuelles",
+                label: "Physique",
+                tooltip: "",
                 layer: "Math",
                 styles: "",
                 rows: [
                     [
+                        { class: "tex", latex: "\\vec{s}", aside: "position" },
+                        { class: "tex", latex: "\\overrightarrow{\\Delta{s}}", aside: "Variation de position" },
+                        { class: "tex", latex: "\\vec{v}", aside: "vitesse" },
+                        { class: "tex", latex: "\\overrightarrow{\\Delta{v}}", aside: "Variation de vitesse" },
+                        { class: "tex", latex: "\\vec{a}", aside: "accélération" },
+                        { class: "tex", latex: "\\overrightarrow{\\Delta{a}}", aside: "Variation d'accélération" },
+                        { class: "tex", latex: "\\theta_i", aside: "Angle d'indidence" },
+                        { class: "tex", latex: "\\theta_r", aside: "Angle de réfl/réfra" },
+                        { class: "tex", latex: "N", aside: "Newton" },                      
+                        
+                    ],
+                    [
+                        { class: "tex", latex: "m", aside: "Masse" },
+                        { class: "tex", latex: "m", aside: "Mètres" },
+                        { class: "tex", latex: "m/s", aside: "Mètres par seconde " },
+                        { class: "tex", latex: "m/s^2", aside: "Mètres par seconde carré" },
+                        { class: "tex", latex: "Kg",  },
+                        { class: "tex", latex: "g", aside: "grammes" },
+                        { class: "tex", latex: "t", aside: "temps" },
+                        { class: "tex", latex: "\\Delta{t}", aside: "variation de temps..." },
+                        { class: "tex", latex: "s", aside: "Secondes" },
+                    ],
+                    [
+                        { aside: 'Plank', latex: '\\hbar' },
+                        { aside: 'Vitesse lumière', latex: 'c' },
+                        { aside: 'Gravitation universelle ', latex: 'G' },
+                        { class: "separator w10" },
+                        { class: "tex", latex: "A", aside: "Ampères" },
+                        { class: "tex", latex: "V", aside: "Volt" },
+                        { class: "tex", latex: "\\Omega", aside: "Ohms" },
+                        { class: "tex", latex: "W", aside: "Watt" },
+                        { class: "tex", latex: "J", aside: "Joules" },
+                    ],
+                    [
+                        { class: "separator w10" },
+                    ]
+                    /* [
+
                         {
                             aside: 'et autres...', latex: "\\\(\\left(#@\\right)\\\)", insert: "\\\(\\left(#@\\right)\\\)",
                             variants: [
@@ -200,31 +190,8 @@ export class MainView extends Component {
                                 '\\vert',
                             ],
                         },
-                        {
-                            aside: 'et autres...', class: "small", latex: "\\frac{#0}{#0}", insert: "$$\\frac{#0}{#0}$$",
-                            variants: [
-                                { latex: "\\nicefrac{#0}{#0} ", insert: "$$\\nicefrac{#0}{#0}$$" }]
-                        },
-                        { latex: "\\vec{#@}" },
-                        {
-                            aside: 'autres constantes...', latex: "\\pi",
-                            variants: [
-                                { aside: 'Pi', latex: '\\pi' },
-                                { aside: 'Plank', latex: '\\hbar' },
-                                { aside: 'Vitesse lumière', latex: 'c' },
-                                { aside: 'Gravitation universelle ', latex: 'G' },
-                                { aside: 'Constante des gaz parfait', latex: 'k' },
-
-                            ]
-                        },
-                        { class: "separator w5" },
-                        { label: '7', key: '7' },
-                        { label: '8', key: '8' },
-                        { label: '9', key: '9' },
-                        { latex: "\\div" },
-
-                    ],
-                    [
+                    ],*/
+                    /*[
                         {
                             aside: 'et autres...', class: 'small', latex: '\\sin\\left( #@ \\right)',
                             variants: [
@@ -247,44 +214,12 @@ export class MainView extends Component {
                                 { latex: "\\longrightarrow", insert: "$$\\longrightarrow$$" },
                                 { latex: "\\rightarrow", insert: "$$\\rightarrow$$" },
                                 { latex: "\\Longrightarrow", insert: "$$\\Longrightarrow$$" },
-                                { class: "small", latex: "\\rightleftharpoons", insert: "$$\\rightleftharpoons$$" },
-                                { latex: "\\rightleftharpoons", insert: "$$\\rightleftharpoons$$" },
-                                { latex: "\\Leftrightharpoons", insert: "$$\\Leftrightharpoons$$" },
-                                { latex: "\\Longleftrightharpoons", insert: "$$\\Longleftrightharpoons$$" },
                                 { class: "small", latex: "\\leftarrow", insert: "$$\\leftarrow$$" },
                                 { latex: "\\longleftarrow", insert: "$$\\longleftarrow$$" },
                                 { latex: "\\Leftarrow", insert: "$$\\Leftarrow$$" },
                                 { latex: "\\Longleftarrow", insert: "$$\\Longleftarrow$$" },
                             ]
                         },
-                        {
-                            class: "tex", latex: "x", aside: "Variables usuelles",
-                            variants: [
-                                { class: "tex", latex: "C", aside: "concentration" },
-                                { class: "tex", latex: "m", aside: "masse" },
-                                { class: "tex", latex: "M", aside: "masse molaire" },
-                                { class: "tex", latex: "n", aside: "nombre de particules" },
-                                { class: "tex", latex: "V", aside: "volume" },
-
-                                { class: "tex", latex: "T", aside: "température" },
-                                { class: "tex", latex: "\\Delta{T}", aside: "variation de tempéature..." },
-                                { class: "tex", latex: "t", aside: "temps" },
-                                { class: "tex", latex: "\\Delta{t}", aside: "variation de temps..." },
-                                { class: "tex", latex: "\\vec{s}", aside: "position" },
-                                { class: "tex", latex: "\\overrightarrow{\\Delta{s}}", aside: "variation de position..." },
-                                { class: "tex", latex: "\\vec{v}", aside: "vitesse" },
-                                { class: "tex", latex: "\\overrightarrow{\\Delta{v}}", aside: "variation de vitesse..." },
-                                { class: "tex", latex: "\\vec{a}", aside: "accélération" },
-                                { class: "tex", latex: "\\overrightarrow{\\Delta{a}}", aside: "variation d'accélération'..." },
-                                { class: "tex", latex: "\\theta_i", aside: "angle d'indidence" },
-                                { class: "tex", latex: "\\theta_r", aside: "angle de réfl/réfra" },
-                            ]
-                        },
-
-                        { class: "separator w5" },
-                        { label: "4", key: "4" },
-                        { label: "5", key: "5" },
-                        { label: "6", key: "6" },
                         {
                             latex: "\\times",
                             variants: [
@@ -296,16 +231,14 @@ export class MainView extends Component {
                                 '\\rtimes',
                                 '\\rightthreetimes',
                                 '\\leftthreetimes',
-                                '\\interc',
-
                                 '\\prod',
                                 { latex: '\\prod_{n\\mathop=0}^{\\infty}', class: 'small' },
                             ]
                         },
 
 
-                    ],
-                    [{
+                    ],*/
+                    /*[{
                         aside: 'et autres...', class: 'small', latex: '\\cos\\left( #0 \\right)',
                         variants: [
                             { class: 'small', latex: '\\cos^{-1}\\left( #@ \\right)' }, { class: 'small', latex: '\\arccos\(#0\)' }
@@ -319,40 +252,14 @@ export class MainView extends Component {
                     },
 
                     { latex: "^\\circ" },
-                    {
-                        class: "tex", latex: "m/s^2", aside: "Unités",
-                        variants: [
-                            { class: "tex", latex: "^\\circ{C}", aside: "degrés Celcius" },
-                            { class: "tex", latex: "m", aside: "mètres" },
-                            { class: "tex", latex: "m/s", aside: "mètres par seconde " },
-                            { class: "tex", latex: "m/s^2", aside: "mètres par seconde carrée" },
-                            { class: "tex", latex: "s", aside: "secondes" },
-                            { class: "tex", latex: "N", aside: "Newton" },
-                            { class: "tex", latex: "W", aside: "Watt" },
-                            { class: "tex", latex: "J", aside: "Joules" },
-                            { class: "tex", latex: "g", aside: "grammes" },
-                            { class: "tex", latex: "l", aside: "litres" },
-                            { class: "tex", latex: "K", aside: "Kelvin" },
-                            { class: "tex", latex: "mol", aside: "mol" },
-                            { class: "tex", latex: "mol/l", aside: "mol/l" },
-                            { class: "tex", latex: "M", aside: "(molaire) mol par litre" },
-                            { class: "tex", latex: "A", aside: "Ampères" },
-                            { class: "tex", latex: "V", aside: "Volt" },
-                            { class: "tex", latex: "\\Omega", aside: "ohms" },
-
-                        ]
-                    },
-                    { class: "separator w5" },
-                    { label: "1", key: "1" },
-                    { label: "2", key: "2" },
-                    { label: "3", key: "3" },
+                
                     {
                         latex: "-",
                         variants: ['\\pm', '\\mp', '\\ominus', '\\vert #0  \\vert']
                     },
 
-                    ],
-                    [{
+                    ],*/
+                    /*[{
                         aside: 'et autres...', class: 'small', latex: '\\tan\\left( #0 \\right)',
                         variants: [
                             { class: 'small', latex: '\\tan^{-1}\\left( #@ \\right)' }, { class: 'small', latex: '\\arctan\(#0\)' }
@@ -366,8 +273,6 @@ export class MainView extends Component {
                         class: "action", label: "<svg><use xlink:href='#svg-arrow-right' /></svg>",
                         command: ["performWithFeedback", "moveToNextChar"]
                     },
-
-
                     {
                         class: "action font-glyph bottom right", label: "&#x232b;",
                         command: ["performWithFeedback", "deleteBackward"]
@@ -393,7 +298,7 @@ export class MainView extends Component {
                     },
 
 
-                    ]
+                    ]*/
                 ]
             },
         ],
@@ -446,7 +351,7 @@ export class MainView extends Component {
         };
 
         this.iFrameRef = React.createRef();
-        this.mathliveRef = React.createRef();
+        this.mathFieldRef = React.createRef();
         this.mathlivePlaceholder = React.createRef();
         this.myMathJax = null;
     }
@@ -465,13 +370,22 @@ export class MainView extends Component {
     loadMathLive(counter){
         counter = counter || 0;
 
-        if(this.mathliveRef.current && this.mathlivePlaceholder.current){
-            this.mathliveRef.current.mathVirtualKeyboardPolicy = "manual";
+        if(this.mathFieldRef.current && this.mathlivePlaceholder.current){
+            this.mathFieldRef.current.mathVirtualKeyboardPolicy = "manual";
 
             window.mathVirtualKeyboard.container = this.mathlivePlaceholder.current;
             window.mathVirtualKeyboard.layouts = MainView.customVirtualKeyboard.layers;
 
-            this.mathliveRef.current.focus();
+            this.mathFieldRef.current.focus();
+            this.mathFieldRef.current.keybindings = [
+                ...this.mathFieldRef.current.keybindings, // preserve existing keybindings
+                {
+                    key: 'shift+[Digit3]',
+                    ifMode: 'math',
+                    command: ['insert', '$\\frac{#@}{#?}']
+                },
+            ]
+
             this.setState({mathLiveReady: true}, this.onComponentReady);
         } 
         else if(counter <= 7){ 
@@ -523,25 +437,21 @@ export class MainView extends Component {
 
     componentDidUpdate(prevProps, prevState){
         if(prevState.iEditingItem !== this.state.iEditingItem){
-            this.mathliveRef.current.parentNode.parentNode.insertAdjacentElement('afterend', this.mathlivePlaceholder.current);
+            this.mathFieldRef.current.parentNode.parentNode.insertAdjacentElement('afterend', this.mathlivePlaceholder.current);
         }
     }
 
-    render() {      
-        /*if(window.mathVirtualKeyboard && !window.mathVirtualKeyboard.visible){
-            window.mathVirtualKeyboard.show();  
-        }*/
-
+    render() {          
         let main = 
             <div>
-                <Tabs activeKey={this.state.selectedTab} onSelect={(t) => this.setState({selectedTab: t})}>
-                    <Tab eventKey="0" title="Équation(s)" className='p-2' style={{overflowY: 'auto', maxHeight: '65vh'}}>
+                <div className='row'>
+                    <div className='col-12 col-sm-8 col-lg-10 p-2' style={{overflowY: 'auto', maxHeight: '65vh'}}>
                         <div>
                             {this.state.data.map((item, index) =>
                                 <div key={index} className='mb-3'>
                                     <div className='mb-1 d-flex'>
                                         {this.state.iEditingItem === index ?
-                                                <math-field ref={this.mathliveRef} style={{width: "100%"}} onInput={(event) => this.onDataChange(event, index)}>{item.latex}</math-field>
+                                                <math-field ref={this.mathFieldRef} style={{width: "100%"}} onInput={(event) => this.onDataChange(event, index)}>{item.latex}</math-field>
                                             :
                                                 <div className='w-100' style={{fontSize: '1rem'}} dangerouslySetInnerHTML={{__html: this.myMathJax.tex2mml(item.latex)}} ></div>
                                         }
@@ -551,39 +461,33 @@ export class MainView extends Component {
                                             <Button size="sm" onClick={() => this.onAdd(index)}><FontAwesomeIcon icon={faPlus} title="Ajouter une autre ligne"/></Button>
                                             <Button size="sm" disabled={index === 0} onClick={() => this.onShift(index, index-1)}><FontAwesomeIcon icon={faArrowUp} title="Monter"/></Button>
                                             <Button size="sm" disabled={index === this.state.data.length - 1} onClick={() => this.onShift(index, index+1)}><FontAwesomeIcon icon={faArrowDown} title="Descendre"/></Button>
-                                            <Button size="sm" disabled={index === 0} onClick={() => this.onDelete(index)}><FontAwesomeIcon icon={faTrashAlt} title="Supprimer"/></Button> 
+                                            <Button size="sm" onClick={() => this.onDelete(index)}><FontAwesomeIcon icon={faTrashAlt} title="Supprimer"/></Button> 
                                         </ButtonGroup>
                                     </div>
                                 </div>
                             )}                            
                         </div>
                         <div className='mt-2 mb-2' ref={this.mathlivePlaceholder} style={{height: this.getMathLiveKeyboardHeight()}}></div>
-                    </Tab>
-                    <Tab eventKey="1" title="Options" className='p-2'>
-                        <Form.Group as={Row} controlId="formOptions1">
-                            <Form.Label column sm="4">Type d'affichage</Form.Label>
-                            <Col sm="8">
-                                <ToggleButtons name='display' options={this.state.dropdownLists.displayList} value={[this.state.options.display]} type='radio' onChange={this.onOptionChange}/>
-                            </Col>
-                        </Form.Group>
+                    </div>
+                    <div className='col-12 col-sm-4 col-lg-2 p-2' style={{borderLeft: "1px solid rgba(0,0,0,.1)"}}>
+                        <Form className="text-sm-right text-lg-right">
+                            <Form.Group className="mb-3"  controlId="formOptions1">
+                                <Form.Label >Affichage</Form.Label>
+                                <ToggleButtons className="justify-content-sm-end justify-content-lg-end" name='display' bsSize="sm" options={this.state.dropdownLists.displayList} value={[this.state.options.display]} type='radio' onChange={this.onOptionChange}/>
+                            </Form.Group>
 
-                        <Form.Group as={Row} controlId="formOptions2">
-                            <Form.Label column sm="4">Ajouter espacement</Form.Label>
-                            <Col sm="8" className='d-flex align-items-center'> 
-                                <ToggleButtons name='addSpace' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addSpace]} type='radio' onChange={this.onOptionChange}/>
-                                <OverlayTrigger overlay={<Tooltip>{"L'espacement ajoute un saut de paragraphe avant et après la formule afin de pouvoir faciliter l'ajout des autres contenus."}</Tooltip>}><Button size='sm' className='ml-2 rounded-circle'><FontAwesomeIcon icon={faInfoCircle}/> </Button></OverlayTrigger>
-                            </Col>
-                        </Form.Group>
+                            <Form.Group className="mb-3"  controlId="formOptions2">
+                                <Form.Label >Espacement <OverlayTrigger overlay={<Tooltip>{"L'espacement ajoute un saut de paragraphe avant et après la formule afin de pouvoir faciliter l'ajout des autres contenus."}</Tooltip>}><FontAwesomeIcon icon={faInfoCircle}/></OverlayTrigger></Form.Label>
+                                <ToggleButtons className="justify-content-sm-end justify-content-lg-end" name='addSpace' bsSize="sm" options={this.state.dropdownLists.yesNoList} value={[this.state.options.addSpace]} type='radio' onChange={this.onOptionChange}/>
+                            </Form.Group>
 
-                        <Form.Group as={Row} controlId="formOptions3">
-                            <Form.Label column sm="4">Ajouter bordure</Form.Label>
-                            <Col sm="8"> 
-                                <ToggleButtons name='addBorder' options={this.state.dropdownLists.yesNoList} value={[this.state.options.addBorder]} type='radio' onChange={this.onOptionChange}/>
-                            </Col>
-                        </Form.Group>  
-                    </Tab>
-                </Tabs>
-
+                            <Form.Group className="mb-3"  controlId="formOptions3">
+                                <Form.Label >Bordure</Form.Label>
+                                <ToggleButtons className="justify-content-sm-end justify-content-lg-end" name='addBorder' bsSize="sm" options={this.state.dropdownLists.yesNoList} value={[this.state.options.addBorder]} type='radio' onChange={this.onOptionChange}/>
+                            </Form.Group> 
+                        </Form>
+                    </div>
+                </div>
                 <hr/>
 
                 <ButtonGroup style={{display: 'grid', gridTemplateColumns: 'auto auto', justifyContent: 'flex-end'}}>
@@ -594,12 +498,12 @@ export class MainView extends Component {
                 <iframe style={{display: "none"}} ref={this.iFrameRef} src={`${M.cfg.wwwroot}/lib/editor/atto/plugins/recitmathlive/react/build/mathjax/index.html`}></iframe>
 
                 {!this.state.componentReady &&
-                    <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 9999, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
-                        <FontAwesomeIcon style={{width: 128, height: 128, position: 'relative', top: '30%', left: '38%'}} icon={faSpinner} spin />
+                    <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.5)', color: '#fff'}}>
+                        <FontAwesomeIcon style={{width: 128, height: 128, position: 'relative', top: '128px', left: '50vw'}} icon={faSpinner} pulse />
                     </div>
                 }   
-            </div>;
- 
+            </div>;      
+
         return (main);
     }
 
@@ -638,7 +542,7 @@ export class MainView extends Component {
                 data.push({latex: item})
             }
 
-            this.mathliveRef.current.setValue(data[0].latex, {suppressChangeNotifications: true});
+            this.mathFieldRef.current.setValue(data[0].latex, {suppressChangeNotifications: true});
         }
         else{ 
             options.addSpace = '1';
@@ -653,7 +557,7 @@ export class MainView extends Component {
         let data = this.state.data;
         data[index].latex = event.target.value;
         // calling setValue onDataChange causes Mathlive to lose the cursor when entering the expression
-       // this.mathliveRef.current.setValue(data[index].latex, {suppressChangeNotifications: true});
+       // this.mathFieldRef.current.setValue(data[index].latex, {suppressChangeNotifications: true});
         this.setState({data: data});
     }
 
@@ -665,8 +569,8 @@ export class MainView extends Component {
 
     onEdit(index){
         this.setState({iEditingItem: index}, () => { 
-            this.mathliveRef.current.focus(); 
-            this.mathliveRef.current.setValue(this.state.data[index].latex, {suppressChangeNotifications: true});
+            this.mathFieldRef.current.focus(); 
+            this.mathFieldRef.current.setValue(this.state.data[index].latex, {suppressChangeNotifications: true});
         });
     }
 
@@ -683,10 +587,10 @@ export class MainView extends Component {
 
         // force mathlive refresh
         if(this.state.iEditingItem === from){
-            this.mathliveRef.current.setValue(data[from].latex, {suppressChangeNotifications: true}); 
+            this.mathFieldRef.current.setValue(data[from].latex, {suppressChangeNotifications: true}); 
         }
         else if(this.state.iEditingItem === to){
-            this.mathliveRef.current.setValue(data[to].latex, {suppressChangeNotifications: true});
+            this.mathFieldRef.current.setValue(data[to].latex, {suppressChangeNotifications: true});
         }
         
         this.setState({data: data});
@@ -696,17 +600,26 @@ export class MainView extends Component {
         let data = [...this.state.data];
         data.splice(index+1, 0, {latex: ""});
         this.setState({data: data, iEditingItem: index + 1}, () => { 
-            this.mathliveRef.current.focus(); 
+            this.mathFieldRef.current.focus(); 
         });
     }
 
     onDelete(index){
         if(window.confirm("Confirmez-vous la suppression?")){
+
             let data = this.state.data;
-            data.splice(index, 1); 
+            if(data.length === 1){
+                this.props.attoInterface.onApply(""); // it closes the editor because data cannot be empty
+            }
+            else{
+                data.splice(index, 1); 
+            }
+            
             this.setState({data: data, iEditingItem: (index === this.state.iEditingItem ? 0 : this.state.iEditingItem)}, () => {
-                this.mathliveRef.current.focus(); 
-                this.mathliveRef.current.setValue(this.state.data[this.state.iEditingItem].latex, {suppressChangeNotifications: true});
+                if(this.mathFieldRef.current){
+                    this.mathFieldRef.current.focus(); 
+                    this.mathFieldRef.current.setValue(this.state.data[this.state.iEditingItem].latex, {suppressChangeNotifications: true});
+                }
             });
         }
     }

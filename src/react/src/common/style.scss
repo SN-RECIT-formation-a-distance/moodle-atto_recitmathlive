@@ -9,3 +9,8 @@
 
  /* Handle on hover */
  ::-webkit-scrollbar-thumb:hover {background: #555;}
+
+/* Hide the virtual keyboard toggle */
+/*math-field::part(virtual-keyboard-toggle) {
+    display: none;
+}*/
