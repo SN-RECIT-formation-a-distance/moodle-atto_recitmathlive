@@ -1,6 +1,6 @@
 {
   "name": "recit_mathlive",
-  "version": "v1.0.5-alpha",
+  "version": "v1.0.6-beta",
   "description": "RÉCIT Math Live",
   "main": "index.js",
   "scripts": {

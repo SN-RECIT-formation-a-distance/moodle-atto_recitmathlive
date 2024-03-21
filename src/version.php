@@ -27,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->version = 2023082900;
 $plugin->requires = 2022041200; // Moodle 4.0.1+ 
 $plugin->component = 'atto_recitmathlive';
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = 'v1.0.5-alpha';
-$plugin->supported = [400, 410];
+$plugin->maturity = MATURITY_BETA;
+$plugin->release = 'v1.0.6-beta';
+$plugin->supported = [400, 401];
