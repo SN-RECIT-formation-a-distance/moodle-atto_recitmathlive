@@ -156,10 +156,12 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         header.classList.add('modal-header');
         header.innerHTML = "<h2>"+M.util.get_string('pluginname', 'atto_recitmathlive')+"</h2>";
         inner.appendChild(header);
+        
         let btn = document.createElement('button');
         btn.classList.add('close');
         btn.innerHTML = '<span aria-hidden="true">&times;</span>';
         btn.setAttribute('data-dismiss', 'modal');
+        btn.onclick = this.destroy.bind(this);
         header.appendChild(btn);
         
         let body = document.createElement('div');
@@ -168,23 +170,27 @@ Y.namespace('M.atto_recitmathlive').Button = Y.Base.create('button', Y.M.editor_
         body.appendChild(content);
         
         document.body.appendChild(modal);
+
         this.myAttr.popup = modal;
-        $(modal).modal({show: true, backdrop: 'static', keyboard: false});
-        let that = this;
-        //$(".modal-static").click(() => $(this.myAttr.popup).modal('hide'));
-        $(modal).on('hidden.bs.modal', function (e) {
-            that.destroy();
-        });
+        this.myAttr.popup.classList.add('show');
+
+        this.myAttr.backdrop = document.createElement('div');
+        this.myAttr.backdrop.classList.add('modal-backdrop', 'fade', 'show');
+        this.myAttr.backdrop.setAttribute('data-backdrop', 'static');
+        document.body.appendChild(this.myAttr.backdrop);
     },
 
     destroy: function(){
-        $(this.myAttr.popup).modal('hide')
+        this.myAttr.popup.classList.remove('show');
+        this.myAttr.backdrop.classList.remove('show');
         this.myAttr.popup.remove();
+        this.myAttr.backdrop.remove();
+
         this.myAttr.selectedNode = null;
     },
     
     update: function(){
-        $(this.myAttr.popup).modal('handleUpdate');
+      //  $(this.myAttr.popup).modal('handleUpdate');
     },
 
     onLoadUI: function(){
